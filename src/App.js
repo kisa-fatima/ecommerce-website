@@ -1,11 +1,22 @@
 import './App.css';
+import Header from './components/Header';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Women from './pages/Women';
+import Men from './pages/Men';
+import Kids from './pages/Kids';
 
 function App() {
   return (
-    <div>
-      {/* Your content here */}
-      <h1>Hello, world!</h1>
-    </div>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/women" element={<Women />} />
+        <Route path="/men" element={<Men />} />
+        <Route path="/kids" element={<Kids />} />
+      </Routes>
+    </Router>
   );
 }
 
