@@ -21,6 +21,7 @@ function Header() {
       </div>
       {/* Center section for desktop/tablet */}
       <div className="header__center">
+        <div className="header__logo">SHOP.CO</div>
         <nav className="header__nav">
           <Link to="/" className="header__link">Home</Link>
           <Link to="/women" className="header__link">Women</Link>

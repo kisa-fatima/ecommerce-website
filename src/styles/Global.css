@@ -8,6 +8,8 @@
   background: #fff;
   font-family: 'Montserrat', Arial, sans-serif;
   border-bottom: 1px solid #e0e0e0; /* Small grey line at the bottom */
+  position: relative;
+  z-index: 10;
 }
 
 .header__center {
@@ -109,6 +111,16 @@
 .ant-drawer .ant-menu-item:hover {
   background-color: #f0f0f0 !important;
   color: #222 !important;
+}
+
+.header__icon--search {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .header__icon--search {
+    display: flex;
+  }
 }
 
 @media (max-width: 600px) {
