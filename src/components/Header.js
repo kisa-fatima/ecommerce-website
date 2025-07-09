@@ -27,6 +27,7 @@ function Header() {
           <Link to="/women" className="header__link">Women</Link>
           <Link to="/men" className="header__link">Men</Link>
           <Link to="/kids" className="header__link">Kids</Link>
+          <Link to="/all-products" className="header__link">All Products</Link>
         </nav>
         <div className="header__search-container">
           <span className="header__search-icon"><FaSearch /></span>
@@ -59,6 +60,9 @@ function Header() {
           </Menu.Item>
           <Menu.Item key="kids">
             <Link to="/kids">Kids</Link>
+          </Menu.Item>
+          <Menu.Item key="all-products">
+            <Link to="/all-products">All Products</Link>
           </Menu.Item>
         </Menu>
       </Drawer>

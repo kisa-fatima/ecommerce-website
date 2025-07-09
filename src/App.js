@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Women from './pages/Women';
 import Men from './pages/Men';
 import Kids from './pages/Kids';
+import AllProducts from './pages/AllProducts';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/women" element={<Women />} />
         <Route path="/men" element={<Men />} />
         <Route path="/kids" element={<Kids />} />
+        <Route path="/all-products" element={<AllProducts />} />
       </Routes>
     </Router>
   );
