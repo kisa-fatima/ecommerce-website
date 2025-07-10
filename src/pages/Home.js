@@ -9,7 +9,7 @@ import HappyCustomers from '../components/HappyCustomers';
 
 const Home = () => {
   return (
-    <div className="home-content-with-gap">
+    <div>
       <HomeHero />
       <BrandLogos />
       <NewArrivals />

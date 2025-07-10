@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { FaShoppingCart, FaUser, FaSearch, FaBars } from 'react-icons/fa';
 import { Drawer, Menu } from 'antd';
 import '../styles/Global.css';
@@ -23,11 +23,11 @@ function Header() {
       <div className="header__center">
       <div className="header__logo">SHOP.CO</div>
       <nav className="header__nav">
-        <Link to="/" className="header__link">Home</Link>
-        <Link to="/women" className="header__link">Women</Link>
-        <Link to="/men" className="header__link">Men</Link>
-        <Link to="/kids" className="header__link">Kids</Link>
-          <Link to="/all-products" className="header__link">All Products</Link>
+        <NavLink to="/" end className={({ isActive }) => isActive ? "header__link active" : "header__link"}>Home</NavLink>
+        <NavLink to="/women" className={({ isActive }) => isActive ? "header__link active" : "header__link"}>Women</NavLink>
+        <NavLink to="/men" className={({ isActive }) => isActive ? "header__link active" : "header__link"}>Men</NavLink>
+        <NavLink to="/kids" className={({ isActive }) => isActive ? "header__link active" : "header__link"}>Kids</NavLink>
+          <NavLink to="/all-products" className={({ isActive }) => isActive ? "header__link active" : "header__link"}>All Products</NavLink>
       </nav>
       <div className="header__search-container">
         <span className="header__search-icon"><FaSearch /></span>
@@ -50,19 +50,19 @@ function Header() {
       >
         <Menu mode="vertical" onClick={closeDrawer}>
           <Menu.Item key="home">
-            <Link to="/">Home</Link>
+            <NavLink to="/" end className={({ isActive }) => isActive ? "header__link active" : "header__link"}>Home</NavLink>
           </Menu.Item>
           <Menu.Item key="women">
-            <Link to="/women">Women</Link>
+            <NavLink to="/women" className={({ isActive }) => isActive ? "header__link active" : "header__link"}>Women</NavLink>
           </Menu.Item>
           <Menu.Item key="men">
-            <Link to="/men">Men</Link>
+            <NavLink to="/men" className={({ isActive }) => isActive ? "header__link active" : "header__link"}>Men</NavLink>
           </Menu.Item>
           <Menu.Item key="kids">
-            <Link to="/kids">Kids</Link>
+            <NavLink to="/kids" className={({ isActive }) => isActive ? "header__link active" : "header__link"}>Kids</NavLink>
           </Menu.Item>
           <Menu.Item key="all-products">
-            <Link to="/all-products">All Products</Link>
+            <NavLink to="/all-products" className={({ isActive }) => isActive ? "header__link active" : "header__link"}>All Products</NavLink>
           </Menu.Item>
         </Menu>
       </Drawer>
