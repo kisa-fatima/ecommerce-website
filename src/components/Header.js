@@ -21,18 +21,18 @@ function Header() {
       </div>
       {/* Center section for desktop/tablet */}
       <div className="header__center">
-        <div className="header__logo">SHOP.CO</div>
-        <nav className="header__nav">
-          <Link to="/" className="header__link">Home</Link>
-          <Link to="/women" className="header__link">Women</Link>
-          <Link to="/men" className="header__link">Men</Link>
-          <Link to="/kids" className="header__link">Kids</Link>
+      <div className="header__logo">SHOP.CO</div>
+      <nav className="header__nav">
+        <Link to="/" className="header__link">Home</Link>
+        <Link to="/women" className="header__link">Women</Link>
+        <Link to="/men" className="header__link">Men</Link>
+        <Link to="/kids" className="header__link">Kids</Link>
           <Link to="/all-products" className="header__link">All Products</Link>
-        </nav>
-        <div className="header__search-container">
-          <span className="header__search-icon"><FaSearch /></span>
-          <input className="header__search" type="text" placeholder="Search for products..." />
-        </div>
+      </nav>
+      <div className="header__search-container">
+        <span className="header__search-icon"><FaSearch /></span>
+        <input className="header__search" type="text" placeholder="Search for products..." />
+      </div>
       </div>
       {/* Icons on the right */}
       <div className="header__icons">
