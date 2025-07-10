@@ -43,6 +43,33 @@ const testimonials = [
   },
 ];
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 600);
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 600);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+}
+
+function TestimonialCard({ t }) {
+  return (
+    <div className="happy-customer-card">
+      <div className="happy-customer-stars">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <span key={i} className="star filled">★</span>
+        ))}
+      </div>
+      <div className="happy-customer-name">
+        <b>{t.name}</b>
+        <span className="happy-customer-check">✔</span>
+      </div>
+      <div className="happy-customer-text">{t.text}</div>
+    </div>
+  );
+}
+
 function NextArrow(props) {
   const { className, style, onClick } = props;
   return (
@@ -104,26 +131,26 @@ const settings = {
   ],
 };
 
-const HappyCustomers = () => (
-  <section className="happy-customers-section">
-    <h2 className="happy-customers-title">OUR HAPPY CUSTOMERS</h2>
-    <Slider {...settings} className="happy-customers-slider">
-      {testimonials.map((t, idx) => (
-        <div className="happy-customer-card" key={idx}>
-          <div className="happy-customer-stars">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} className="star filled">★</span>
-            ))}
-          </div>
-          <div className="happy-customer-name">
-            <b>{t.name}</b>
-            <span className="happy-customer-check">✔</span>
-          </div>
-          <div className="happy-customer-text">{t.text}</div>
+const HappyCustomers = () => {
+  const isMobile = useIsMobile();
+  return (
+    <section className="happy-customers-section">
+      <h2 className="happy-customers-title">OUR HAPPY CUSTOMERS</h2>
+      {isMobile ? (
+        <div className="happy-customers-grid">
+          {testimonials.slice(0, 2).map((t, idx) => (
+            <TestimonialCard t={t} key={idx} />
+          ))}
         </div>
-      ))}
-    </Slider>
-  </section>
-);
+      ) : (
+        <Slider {...settings} className="happy-customers-slider">
+          {testimonials.map((t, idx) => (
+            <TestimonialCard t={t} key={idx} />
+          ))}
+        </Slider>
+      )}
+    </section>
+  );
+};
 
 export default HappyCustomers; 
