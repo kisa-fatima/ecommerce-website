@@ -373,14 +373,28 @@
 }
 
 @media (max-width: 600px) {
+  body, html {
+    overflow-x: hidden;
+  }
+  .footer-container {
+    overflow-x: hidden;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 12px;
+    max-width: 100vw;
+    width: 100%;
+    box-sizing: border-box;
+  }
   .footer-newsletter {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 24px 12px;
     width: 90vw;
-    max-width: 90vw;
-    top: -24px;
-    border-radius: 10px;
+    max-width: 100%;
+    margin: 40px auto 0 auto;
+    border-radius: 20px;
+    box-sizing: border-box;
+    padding: 24px 8px;
+    left: unset;
+    right: unset;
+    transform: none;
     overflow-x: hidden;
   }
   .footer-newsletter-text,
@@ -440,14 +454,6 @@
     width: auto;
     margin: 0 2px;
     min-width: 0;
-  }
-  .footer-container {
-    padding-left: 8px;
-    padding-right: 8px;
-    border-radius: 12px;
-    max-width: 100vw;
-    width: 100%;
-    box-sizing: border-box;
   }
 }
 
