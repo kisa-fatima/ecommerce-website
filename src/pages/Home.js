@@ -1,5 +1,6 @@
 import React from 'react';
 import HomeHero from '../components/HomeHero';
+import '../styles/Home.css';
 import BrandLogos from '../components/BrandLogos';
 import NewArrivals from '../components/NewArrivals';
 import TopSelling from '../components/TopSelling';
@@ -8,7 +9,7 @@ import HappyCustomers from '../components/HappyCustomers';
 
 const Home = () => {
   return (
-    <div>
+    <div className="home-content-with-gap">
       <HomeHero />
       <BrandLogos />
       <NewArrivals />

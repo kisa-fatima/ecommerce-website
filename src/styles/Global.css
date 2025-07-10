@@ -172,7 +172,7 @@
 
 /* Footer Styles */
 .footer {
-  background: #f6f6f6;
+  background-color: #f5f5f559 !important; /* Light grey */
   color: #222;
   font-family: 'Inter', Arial, sans-serif;
   margin-top: 40px;
@@ -287,7 +287,7 @@
 
 .footer-links {
   display: flex;
-  gap: 48px;
+  gap: 8px;
   flex: 3 1 600px;
   flex-wrap: wrap;
 }
@@ -342,6 +342,24 @@
   box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 
+.footer-payments {
+  margin-top: 12px;
+}
+
+.footer-container {
+  background: #f5f5f5 !important;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+  border-radius: 24px;
+  max-width: 100vw;   /* Expand to full viewport width */
+  width: 100%;
+  box-sizing: border-box;
+}
+.footer-main, .footer-bottom {
+  background: transparent !important;
+}
+
 @media (max-width: 900px) {
   .footer-main {
     flex-direction: column;
@@ -349,7 +367,8 @@
     padding: 36px 4vw 18px 4vw;
   }
   .footer-links {
-    gap: 32px;
+    gap: 4px;
+    margin-left: 10px;
   }
 }
 
@@ -358,20 +377,77 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 24px 12px;
-    width: 98vw;
-    max-width: 98vw;
+    width: 90vw;
+    max-width: 90vw;
     top: -24px;
+    border-radius: 10px;
+    overflow-x: hidden;
+  }
+  .footer-newsletter-text,
+  .footer-newsletter-form,
+  .footer-btn {
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .footer-newsletter-form {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  .footer-input {
+    width: 100%;
+    min-width: 0 !important;
+    box-sizing: border-box;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 0 auto;
+    display: block;
+  }
+  .footer-btn {
+    width: 100%;
+    min-width: 0 !important;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0 auto;
+    display: block;
   }
   .footer-newsletter-text h2 {
     font-size: 1.2rem;
+    margin-bottom: 12px;
   }
   .footer-main {
     padding: 24px 2vw 12px 2vw;
   }
   .footer-bottom {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
     padding: 12px 2vw 8px 2vw;
+    margin-left: -30px;
+  }
+  .footer-payments {
+    justify-content: center;
+    flex-wrap: nowrap;
     gap: 8px;
+    margin-top: 4px;
+    margin-left: 25px;
+    display: flex;
+  }
+  .footer-payments img {
+    height: 20px;
+    width: auto;
+    margin: 0 2px;
+    min-width: 0;
+  }
+  .footer-container {
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 12px;
+    max-width: 100vw;
+    width: 100%;
+    box-sizing: border-box;
   }
 }
+

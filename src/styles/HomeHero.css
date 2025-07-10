@@ -121,6 +121,10 @@
     padding-left: 2vw;
   }
 }
+.home-content-with-gap {
+  margin-bottom: 700px; /* Adjust the value as needed for desired gap */
+}
+
 
 @media (max-width: 600px) {
   .home-hero {
