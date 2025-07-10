@@ -38,7 +38,7 @@ function Header() {
       <div className="header__icons">
         <span className="header__icon header__icon--search"><FaSearch /></span>
         <span className="header__icon" title="Cart"><FaShoppingCart /></span>
-        <span className="header__icon" title="Profile"><FaUser /></span>
+        <Link to="/login" className="header__icon" title="Profile"><FaUser /></Link>
       </div>
       {/* Drawer for mobile menu */}
       <Drawer
