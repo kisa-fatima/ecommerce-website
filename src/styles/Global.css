@@ -28,6 +28,7 @@
 .header__nav {
   display: flex;
   gap: 32px;
+  height: 100%;
 }
 
 .header__link {
@@ -36,10 +37,21 @@
   font-size: 1rem;
   font-weight: 500;
   transition: color 0.2s;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 .header__link:hover {
-  color: #888;
+  background: none;
+  color: #111 !important;
+  font-weight: bold;
+  border-bottom: 3px solid #111;
+  border-radius: 0;
+  padding: 0 0 4px 0;
+  transition: border-bottom 0.2s, color 0.2s;
+
 }
 
 .header__search-container {
@@ -171,13 +183,18 @@
 }
 
 .header__link.active {
-  background: #111;
-  color: #fff !important;
+  background: none;
+  color: #111 !important;
   font-weight: bold;
-  border-bottom: none;
-  border-radius: 8px;
-  padding: 4px 12px;
-  transition: background 0.2s, color 0.2s;
+  border-bottom: 3px solid #111;
+  border-radius: 0;
+  padding: 0 0 4px 0;
+  transition: border-bottom 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
 }
 
 /* Footer Styles */
@@ -464,6 +481,14 @@
     width: auto;
     margin: 0 2px;
     min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .header__link.active,
+  .header__link:hover {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
   }
 }
 
