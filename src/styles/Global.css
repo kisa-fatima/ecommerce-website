@@ -542,6 +542,12 @@
   transition: background 0.2s, color 0.2s;
   display: flex;
   align-items: center;
+  cursor: pointer;
+  z-index: 1000;
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+  box-sizing: content-box;
 }
 .login-back-arrow:hover {
   background: #fff;

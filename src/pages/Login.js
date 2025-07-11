@@ -15,17 +15,14 @@ const signupValidationSchema = Yup.object({
   email: Yup.string()
     .required('Email is required')
     .test('is-gmail', 'Invalid email', value => value && value.includes('@gmail')),
-  username: Yup.string()
-    .required('Username is required')
-    .test('is-gmail', 'Invalid username', value => value && value.includes('@gmail')),
   password: Yup.string().required('Password is required'),
 });
 
 // Login validation schema
 const loginValidationSchema = Yup.object({
-  username: Yup.string()
-    .required('Username is required')
-    .test('is-gmail', 'Invalid username', value => value && value.includes('@gmail')),
+  email: Yup.string()
+    .required('Email is required')
+    .test('is-gmail', 'Invalid email', value => value && value.includes('@gmail')),
   password: Yup.string().required('Password is required'),
 });
 
@@ -56,9 +53,35 @@ const Login = () => {
   return (
     <div className="login-bg">
       <div className="login-header-row">
-        <Link to="/" className="login-back-arrow" title="Back to Home">
+        <button
+          type="button"
+          className="login-back-arrow"
+          title="Back to Home"
+          aria-label="Back to Home"
+          tabIndex={0}
+          style={{
+            cursor: 'pointer',
+            background: 'rgba(0,0,0,0.3)',
+            border: 'none',
+            outline: 'none',
+            zIndex: 1000,
+            minWidth: 44,
+            minHeight: 44,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative'
+          }}
+          onClick={() => navigate('/')}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+              e.preventDefault();
+              navigate('/');
+            }
+          }}
+        >
           <FaArrowLeft />
-        </Link>
+        </button>
         <span className="login-brand login-brand-left">SHOP.CO</span>
       </div>
       <video
@@ -91,7 +114,8 @@ const Login = () => {
       <div className={`login-content${mode === 'signup' ? ' signup-mode' : ''}`}>
         {mode === 'signup' ? (
           <Formik
-            initialValues={{ name: '', email: '', username: '', password: '' }}
+            key="signup"
+            initialValues={{ name: '', email: '', password: '' }}
             validationSchema={signupValidationSchema}
             onSubmit={values => { /* handle signup */ }}
           >
@@ -107,11 +131,6 @@ const Login = () => {
                   <Field type="email" name="email" placeholder="Email" className="login-input" autoComplete="off" />
                 </div>
                 <ErrorMessage name="email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
-                <div className="login-input-group">
-                  <span className="login-icon"><FaUser /></span>
-                  <Field type="text" name="username" placeholder="Username" className="login-input" autoComplete="off" />
-                </div>
-                <ErrorMessage name="username" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-input-group" style={{ position: 'relative' }}>
                   <span className="login-icon"><FaLock /></span>
                   <Field
@@ -147,7 +166,8 @@ const Login = () => {
           </Formik>
         ) : (
           <Formik
-            initialValues={{ username: '', password: '' }}
+            key="login"
+            initialValues={{ email: '', password: '' }}
             validationSchema={loginValidationSchema}
             onSubmit={values => { /* handle login */ }}
           >
@@ -156,14 +176,14 @@ const Login = () => {
                 <div className="login-input-group">
                   <span className="login-icon"><FaUser /></span>
                   <Field
-                    type="text"
-                    name="username"
-                    placeholder={loginType === 'Admin' ? 'Username' : 'Username'}
+                    type="email"
+                    name="email"
+                    placeholder="Email"
                     className="login-input"
                     autoComplete="off"
                   />
                 </div>
-                <ErrorMessage name="username" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-input-group" style={{ position: 'relative' }}>
                   <span className="login-icon"><FaLock /></span>
                   <Field
