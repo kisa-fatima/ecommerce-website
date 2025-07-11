@@ -566,20 +566,21 @@
 }
 
 .login-form {
-  max-width: 600px !important;
+  background: rgba(30, 30, 30, 0.7); /* Match signup form background */
+  backdrop-filter: blur(8px); /* Match signup form blur */
+  border-radius: 18px; /* Match signup form border radius */
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.25); /* Match signup form shadow */
+  padding: 36px 32px 24px 32px; /* Match signup form padding */
+  max-width: 500px !important; /* Match signup form width */
   width: 100%;
-  min-height: 600px;
+  margin-top: 40px;
+  margin-bottom: 30px;
+  gap: 20px;
+  border: 1.5px solid #fff2; /* Match signup form border */
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  text-align: center;
-  gap: 24px;
-  border: 2px solid #fff;
-  margin-top: 200px;
-  margin-bottom: 300px;
-  box-sizing: border-box;
-}
+} /* Login form matches signup theme */
 
 .login-content {
   position: relative;
@@ -616,7 +617,7 @@
   outline: none;
   color: #fff;
   font-size: 1rem;
-  padding: 6px 10px;     /* adjust for more/less padding */
+  padding: 60px 15px;     /* adjust for more/less padding */
   flex: 1;
   width: 100%;           /* makes the input fill the group */
   height: 32px;          /* adjust for taller/shorter input */
@@ -630,30 +631,36 @@
 
 .login-options {
   display: flex;
-  align-items: center;
+  align-items: center; /* Vertically center items */
   justify-content: space-between;
   font-size: 0.95rem;
   color: #fff;
   margin-bottom: 0;
-}
+  width: 100%; /* Ensure full width for spacing */
+} /* Keep Remember me and Forgot Password on one line */
+
+.login-remember {
+  display: flex;
+  align-items: center; /* Vertically center checkbox and label */
+  font-size: 1.1rem;
+  gap: 6px; /* Space between checkbox and label */
+  margin: 0; /* Remove extra margin */
+} /* Checkbox left of label */
 
 .login-remember input[type="checkbox"] {
   accent-color: #fff;
-  margin: 20px 0 0 20px;
-}
+  margin: 0 6px 0 0; /* Checkbox left, small right margin */
+  transform: scale(1.5); /* Make the checkbox bigger */
+} /* Style for checkbox */
 
 .login-forgot {
   color: #ede9e9;
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   transition: color 0.2s;
-  margin-left: 200px;
-  margin: 20px 0 0 20px;
-}
-.login-forgot:hover {
-  color: #fff;
-  text-decoration: underline;
-}
+  margin: 0 0 0 10px; /* Only left margin for spacing */
+  align-self: center; /* Vertically center */
+} /* Forgot Password aligned right */
 
 .login-btn-main {
   width: 180px;
@@ -687,7 +694,7 @@
   color: #fff;
   border: 2px solid #fff;
   border-radius: 8px;
-  padding: 8px 32px;
+  padding: 20px 55px; /* Increased horizontal padding for wider box */
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
@@ -708,10 +715,20 @@
   max-width: 1000px;
 }
 
-.login-content, .login-bg {
+.login-content {
   width: 100vw;
   max-width: 100vw;
   display: flex;
+  margin-top: 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.login-bg {
+  width: 100vw;
+  max-width: 100vw;
+  display: flex;
+  margin-top: 2px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -756,19 +773,96 @@
 }
 
 .login-signup-link {
-  color: #4d4a3fdc;
+  color: #2475b3dc;
   font-weight: bold;
   text-decoration: underline;
   cursor: pointer;
   margin-left: 4px;
 }
 .login-signup-link:hover {
-  color: #4e4e49;
+  color: #1e5375;
 }
 
 .login-form-container {
   margin-top: 60px; /* Adjust this value as needed */
 }
+
+.login-content.signup-mode {
+  margin-top: 20px; /* Move the signup box higher */
+}
+
+.signup-form {
+  background: rgba(30, 30, 30, 0.7); /* Match login form background */
+  backdrop-filter: blur(8px); /* Background blur for signup */
+  border-radius: 18px; /* Smooth rounded corners for signup */
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.25); /* Match login form shadow */
+  padding: 36px 32px 24px 32px; /* Match login form padding */
+  max-width: 500px !important; /* Make the box wider */
+  width: 100%;
+  margin-top: 40px;
+  margin-bottom: 30px;
+  gap: 20px;
+  border: 1.5px solid #fff2; /* Match login form border */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+} /* Signup form matches login theme and is wider */
+
+.signup-form .login-input-group {
+  background: #181818cc; /* Match login input group background */
+  border-radius: 8px;
+  margin-bottom: 0;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  box-shadow: none; /* Remove extra shadow for consistency */
+  width: 100%; /* Make input group fill the form width */
+} /* Signup input group matches login */
+
+.signup-form .login-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff; /* Match login input text color */
+  font-size: 1.7rem;
+  padding: 12px 10px;
+  flex: 1;
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+} /* Signup input matches login */
+
+.signup-form .login-btn-main {
+  width: 100%;
+  max-width: 220px;
+  font-size: 1.7rem;
+  padding: 12px 0;
+  margin: 0 auto 18px auto;
+  background: #fff; /* Match login button background */
+  color: #222; /* Match login button text color */
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+} /* Signup button matches login */
+
+.signup-form .login-signup-message {
+  margin-top: 10px;
+  color: #fff; /* Match login message color */
+  font-size: 1.9rem;
+  text-align: center;
+} /* Signup message matches login */
+
+@media (max-width: 600px) {
+  .signup-form {
+    max-width: 98vw !important;
+    padding: 18px 4vw 18px 4vw;
+  }
+}
+
+/* Removed .signup-form custom styles so signup and login look identical */
 
 @media (max-width: 600px) {
   .header__link.active,
