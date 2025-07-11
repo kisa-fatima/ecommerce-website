@@ -1,4 +1,5 @@
 import React from 'react';
+import StyleCards from './StyleCards';
 import '../styles/BrowseByStyle.css';
 
 const styles = [
@@ -27,17 +28,7 @@ const styles = [
 const BrowseByStyle = () => (
   <section className="browse-style-section">
     <h2 className="browse-style-title">BROWSE BY DRESS STYLE</h2>
-    <div className="browse-style-grid">
-      {styles.map((style, idx) => (
-        <div className="browse-style-card" key={idx}>
-          <div className="browse-style-img-wrap">
-            <img src={style.image} alt={style.label} className={`browse-style-img main${style.label === 'Formal' ? ' formal-main-img' : ''}${style.label === 'Casual' ? ' casual-main-img' : ''}`} />
-            <img src={style.hoverImage} alt={style.label + ' hover'} className={`browse-style-img hover${style.label === 'Casual' ? ' casual-hover-img' : ''}`} />
-          </div>
-          <div className="browse-style-label">{style.label}</div>
-        </div>
-      ))}
-    </div>
+    <StyleCards styles={styles} />
   </section>
 );
 

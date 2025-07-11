@@ -13,7 +13,7 @@
   text-align: center;
   font-size: 1.2rem;
   font-weight: 800;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
   letter-spacing: 1px;
   font-family: 'Boldonse', sans-serif;
 }
@@ -24,96 +24,6 @@
   justify-content: center;
   flex-wrap: wrap;
   margin-bottom: 32px;
-}
-
-.new-arrival-card {
-  background: #fafafa;
-  border-radius: 18px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-  width: 220px;
-  padding: 20px 16px 16px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: box-shadow 0.2s;
-}
-
-.new-arrival-card:hover {
-  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-}
-
-.new-arrival-img-wrap {
-  width: 120px;
-  height: 120px;
-  background: #fff;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-  overflow: hidden;
-}
-
-.new-arrival-img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-
-.new-arrival-info {
-  width: 100%;
-  text-align: center;
-}
-
-.new-arrival-name {
-  font-size: 1.05rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-  min-height: 40px;
-}
-
-.new-arrival-rating {
-  color: #FFD600;
-  font-size: 1.1rem;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.star {
-  color: #e0e0e0;
-}
-.star.filled {
-  color: #FFD600;
-}
-.rating-value {
-  color: #888;
-  font-size: 0.95rem;
-  margin-left: 6px;
-}
-
-.new-arrival-pricing {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 1.1rem;
-}
-.price {
-  font-weight: 700;
-  color: #111;
-}
-.old-price {
-  text-decoration: line-through;
-  color: #b0b0b0;
-  font-size: 1rem;
-}
-.discount {
-  color: #ff4d4f;
-  font-weight: 600;
-  font-size: 0.98rem;
 }
 
 .new-arrivals-viewall {
@@ -138,48 +48,21 @@
   .new-arrivals-row {
     gap: 20px;
   }
-  .new-arrival-card {
-    width: 170px;
-    padding: 14px 8px 12px 8px;
-  }
-  .new-arrival-img-wrap {
-    width: 90px;
-    height: 90px;
-  }
 }
 
 @media (max-width: 600px) {
   .new-arrivals-section {
-    padding: 0 4px 24px 4px;
+    padding: 0 16px 24px 16px;
   }
   .new-arrivals-title {
     font-size: 1rem;
-    margin-bottom: 18px;
+    margin-bottom: 24px;
   }
   .new-arrivals-row {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     justify-content: center;
-    align-items: flex-start;
-  }
-  .new-arrival-card {
-    width: 48%;
-    min-width: 120px;
-    max-width: 180px;
-    padding: 8px 2px 8px 2px;
-    margin: 0;
-    box-sizing: border-box;
-  }
-  .new-arrival-img-wrap {
-    width: 60px;
-    height: 60px;
-  }
-  .new-arrival-name {
-    font-size: 0.85rem;
-    min-height: 28px;
-  }
-  .new-arrival-pricing {
-    font-size: 0.95rem;
+    align-items: start;
   }
 } 
