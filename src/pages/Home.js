@@ -15,6 +15,18 @@ const Home = () => {
       <NewArrivals />
       <TopSelling />
       <BrowseByStyle />
+      {/* Center-cropped, horizontally-fitted video with overlay text */}
+      <div className="home-vertical-video-wrap">
+        <span className="home-video-overlay">SHOP NOW</span>
+        <video
+          src={process.env.PUBLIC_URL + '/assets/videos/home-video.mp4'}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="home-vertical-video"
+        />
+      </div>
       <HappyCustomers />
     </div>
   );

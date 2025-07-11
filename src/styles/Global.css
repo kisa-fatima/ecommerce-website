@@ -107,8 +107,14 @@
   transition: color 0.2s;
 }
 
-.header__icon:hover {
-  color: #888;
+.header__icon:hover,
+.header__icon:focus {
+  color: #888 !important;
+}
+
+.header__icon[title="Profile"]:hover svg,
+.header__icon[title="Profile"]:focus svg {
+  color: #888 !important;
 }
 
 /* Override Ant Design Menu selected item color in Drawer */
@@ -763,14 +769,13 @@
   padding: 14px 20px;
   box-sizing: border-box;
   margin-bottom: 50px;
-}
-
-.login-remember {
-  font-size: 0.95rem;
-}
-
-.login-forgot {
-  font-size: 0.95rem;
+  color: #fff;
+  background: transparent;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  flex: 1;
 }
 
 .login-btn-main {
@@ -778,8 +783,21 @@
   font-size: 1.4rem;
   padding: 16px 0;
   margin-bottom: 50px;
-  margin-top: 50px; /* Increase this value as needed */
-  /* ...other existing styles... */
+  margin-top: 50px;
+  display: block;
+  background: rgba(255,255,255,0.8);
+  color: #222;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+}
+
+.login-btn-main:hover {
+  background: #fff;
+  color: #000;
 }
 
 .login-signup-message {
