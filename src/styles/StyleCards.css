@@ -1,0 +1,140 @@
+.style-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.style-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  position: relative;
+  min-height: 180px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.style-card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  transform: translateY(-2px) scale(1.02);
+  background: #000;
+}
+
+.style-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2.7/1.2;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  background: #eee;
+}
+
+.style-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.35s cubic-bezier(.4,0,.2,1);
+  border-radius: 16px 16px 0 0;
+}
+
+.style-img.main {
+  opacity: 1;
+  z-index: 1;
+}
+
+.style-img.hover {
+  opacity: 0;
+  z-index: 2;
+}
+
+.style-card:hover .style-img.hover,
+.style-card:focus .style-img.hover {
+  opacity: 1;
+}
+
+.style-card:hover .style-img.main,
+.style-card:focus .style-img.main {
+  opacity: 0;
+}
+
+.style-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  padding: 16px 18px 10px 18px;
+  transition: color 0.2s ease;
+}
+
+.style-card:hover .style-label {
+  color: #fff;
+}
+
+.formal-main-img {
+  object-position: center 0%;
+}
+
+.style-card .formal-main-img + .hover {
+  object-position: center 0%;
+}
+
+.casual-main-img {
+  object-position: center 10%;
+}
+
+.casual-hover-img {
+  object-position: center 0%;
+}
+
+.party-hover-img {
+  object-position: center 10%;
+}
+
+@media (max-width: 900px) {
+  .style-cards-grid {
+    gap: 12px;
+  }
+  .style-img-wrap {
+    aspect-ratio: 2.2/1.1;
+  }
+  .style-img {
+    height: 90px;
+  }
+}
+
+@media (max-width: 600px) {
+  .style-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 0 16px;
+  }
+  .style-card {
+    min-height: 90px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    border-radius: 14px;
+  }
+  .style-img-wrap {
+    aspect-ratio: 1.7/1;
+    border-radius: 14px 14px 0 0;
+  }
+  .style-img {
+    height: 100%;
+    border-radius: 14px 14px 0 0;
+  }
+  .style-label {
+    font-size: 0.95rem;
+    padding: 8px 8px 6px 8px;
+  }
+}

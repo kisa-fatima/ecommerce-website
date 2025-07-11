@@ -1,10 +1,11 @@
 import React from 'react';
+import ProductCard from './ProductCard';
 import '../styles/NewArrivals.css';
 
 const products = [
   {
     name: 'T-shirt with Tape Details',
-    image: 'https://via.placeholder.com/120x120?text=T-shirt',
+    image: 'https://images.pexels.com/photos/32936114/pexels-photo-32936114.jpeg',
     rating: 4.5,
     price: 120,
     oldPrice: null,
@@ -41,25 +42,7 @@ const NewArrivals = () => (
     <h2 className="new-arrivals-title">NEW ARRIVALS</h2>
     <div className="new-arrivals-row">
       {products.map((product, idx) => (
-        <div className="new-arrival-card" key={idx}>
-          <div className="new-arrival-img-wrap">
-            <img src={product.image} alt={product.name} className="new-arrival-img" />
-          </div>
-          <div className="new-arrival-info">
-            <div className="new-arrival-name">{product.name}</div>
-            <div className="new-arrival-rating">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className={i < Math.floor(product.rating) ? 'star filled' : 'star'}>★</span>
-              ))}
-              <span className="rating-value">{product.rating}/5</span>
-            </div>
-            <div className="new-arrival-pricing">
-              <span className="price">${product.price}</span>
-              {product.oldPrice && <span className="old-price">${product.oldPrice}</span>}
-              {product.discount && <span className="discount">{product.discount}</span>}
-            </div>
-          </div>
-        </div>
+        <ProductCard key={idx} product={product} />
       ))}
     </div>
     <button className="new-arrivals-viewall">View All</button>

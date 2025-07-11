@@ -6,38 +6,47 @@ import '../styles/HappyCustomers.css';
 
 const testimonials = [
   {
+    id: 1,
     name: 'Sarah M.',
     text: "I'm blown away by the quality and style of the clothes I received from Shop.co. From casual wear to elegant dresses, every piece I've bought has exceeded my expectations.",
   },
   {
+    id: 2,
     name: 'Alex K.',
     text: "Finding clothes that align with my personal style used to be a challenge until I discovered Shop.co. The range of options they offer is truly remarkable, catering to a variety of tastes and occasions.",
   },
   {
+    id: 3,
     name: 'James L.',
     text: "As someone who's always on the lookout for unique fashion pieces, I'm thrilled to have stumbled upon Shop.co. The selection of clothes is not only diverse but also on-point with the latest trends.",
   },
   {
+    id: 4,
     name: 'Priya S.',
     text: "Shop.co has become my go-to for all things fashion. The quality, variety, and customer service are top-notch. Highly recommended!",
   },
   {
+    id: 5,
     name: 'Carlos D.',
     text: "I love how easy it is to find exactly what I'm looking for on Shop.co. The site is user-friendly, and the clothes always arrive on time and as described.",
   },
   {
+    id: 6,
     name: 'Emily R.',
     text: "The customer support at Shop.co is fantastic. They helped me with sizing and returns quickly and kindly. I always feel valued as a customer.",
   },
   {
+    id: 7,
     name: 'Mohammed A.',
     text: "Great prices, fast shipping, and a huge selection. Shop.co is my favorite place to shop for clothes online!",
   },
   {
+    id: 8,
     name: 'Linda W.',
     text: "I get compliments every time I wear something from Shop.co. The styles are trendy and the quality is excellent.",
   },
   {
+    id: 9,
     name: 'Chen Z.',
     text: "Shop.co makes it easy to stay on top of the latest fashion trends. I love their curated collections!",
   },
@@ -138,8 +147,8 @@ const HappyCustomers = () => {
       <h2 className="happy-customers-title">OUR HAPPY CUSTOMERS</h2>
       {isMobile ? (
         <div className="happy-customers-grid">
-          {testimonials.slice(0, 2).map((t, idx) => (
-            <TestimonialCard t={t} key={idx} />
+          {testimonials.filter(t => t.id === 7 || t.id === 9).map((t) => (
+            <TestimonialCard t={t} key={t.id} />
           ))}
         </div>
       ) : (
