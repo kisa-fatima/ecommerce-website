@@ -514,16 +514,17 @@
 .login-brand {
   font-family: 'Boldonse', cursive;
   color: #fff;
-  font-size: 2.2rem; /* Decreased from 5rem */
+  font-size: 1.5rem; /* Decreased from 5rem */
   text-align: center;
   margin-bottom: 40px;
   letter-spacing: 2px;
   text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+  margin-top: 0px
 } /* Smaller SHOP.CO on login/signup */
 
 .login-header-row {
   position: absolute;
-  top: 32px;
+  top: 0;
   left: 32px;
   display: flex;
   align-items: center;
@@ -534,10 +535,10 @@
 .login-back-arrow {
   position: static;
   color: #fff;
-  font-size: 2rem;
+  font-size: 1.5rem;
   background: rgba(0,0,0,0.3);
   border-radius: 50%;
-  padding: 8px;
+  padding: 2px;
   text-decoration: none;
   transition: background 0.2s, color 0.2s;
   display: flex;
@@ -550,14 +551,18 @@
   box-sizing: content-box;
 }
 .login-back-arrow:hover {
-  background: #fff;
-  color: #111;
+  background: #fff !important;
+  color: #111 !important;
+}
+.login-back-arrow:hover svg {
+  color: #111 !important;
+  fill: #111 !important;
 }
 
 .login-brand-left {
   font-family: 'Boldonse', cursive;
   color: #fff;
-  font-size: 1.7rem; /* Decreased from 4rem */
+  font-size: 1.5rem; /* Decreased from 4rem */
   margin-left: 0;
   margin-top: 3rem;
   letter-spacing: 2px;
@@ -570,7 +575,7 @@
 .login-form-title {
   font-family: 'Boldonse', cursive;
   color: #fff;
-  font-size: 3rem;
+  font-size: 2.5rem;
   text-align: center;
   margin-bottom: 40px;
   letter-spacing: 1px;
@@ -905,6 +910,19 @@
     max-width: 90vw !important;
     padding: 10px 2vw 10px 2vw;
   }
+  .login-brand {
+    font-size: 0.5rem;
+    letter-spacing: 1px;
+  }
+  .login-back-arrow {
+    font-size: 1.1rem;
+    min-width: 36px;
+    min-height: 36px;
+  }
+  .login-form-title {
+    font-size: 1.5rem;
+    padding: 0.5rem 0;
+  }
 }
 
 .login-form-header {
@@ -918,4 +936,68 @@
   z-index: 2;
   position: relative;
 } /* Centered header for login form title and toggle */
+
+@media (max-width: 600px) {
+  .login-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.2rem;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: static;
+    width: 100%;
+    text-align: left !important;
+  }
+  .login-back-arrow {
+    font-size: 1.1rem;
+    min-width: 36px;
+    min-height: 36px;
+    margin: 0;
+    padding: 0;
+    position: static;
+    padding-top: 0px;
+  }
+  .login-brand {
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    margin: 0;
+    padding: 0;
+    position: static;
+    text-align: left !important;
+  }
+  .login-form-title {
+    font-size: 1.1rem;
+    padding: 0.5rem 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .login-bg {
+    align-items: flex-start !important;
+    padding-top: 0 !important;
+  }
+  .login-header-row {
+    left: 0;
+    top: 0;
+    padding: 12px 0 0 0 !important;
+    margin: 0 !important;
+    width: 100%;
+    align-items: center;
+    position: absolute;
+    z-index: 10;
+    gap: 6px;
+  }
+  .login-back-arrow {
+    padding: 0 !important;
+    margin: 0 !important;
+    top: 0;
+    left: 0;
+    position: relative;
+  }
+  .login-form-title {
+    font-size: 2rem;
+    padding: 0.5rem 0;
+  }
+}
 

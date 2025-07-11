@@ -12,17 +12,13 @@ function useQuery() {
 // Signup validation schema
 const signupValidationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
-  email: Yup.string()
-    .required('Email is required')
-    .test('is-gmail', 'Invalid email', value => value && value.includes('@gmail')),
+  email: Yup.string().email('Invalid email').required('Email is required'),
   password: Yup.string().required('Password is required'),
 });
 
 // Login validation schema
 const loginValidationSchema = Yup.object({
-  email: Yup.string()
-    .required('Email is required')
-    .test('is-gmail', 'Invalid email', value => value && value.includes('@gmail')),
+  email: Yup.string().email('Invalid email').required('Email is required'),
   password: Yup.string().required('Password is required'),
 });
 
