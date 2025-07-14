@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PageBanner from '../components/PageBanner';
 import casualPageImg from '../assets/images/casualPage.jpg';
 
 const casual = () => {
+
   return (
+    
     <>
       <PageBanner
         image={casualPageImg}
