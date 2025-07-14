@@ -1,7 +1,7 @@
 import './App.css';
 import AboveHeader from './components/AboveHeader';
 import Header from './components/Header';
-import Breadcrumbs from './components/Breadcrumbs';
+import ScrollToTop from './ScrollToTop';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import Women from './pages/Women';
@@ -41,6 +41,7 @@ function AppContent() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <AppContent />
     </Router>
   );
