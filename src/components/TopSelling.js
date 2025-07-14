@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import '../styles/NewArrivals.css';
 
@@ -37,16 +38,19 @@ const products = [
   },
 ];
 
-const TopSelling = () => (
-  <section className="new-arrivals-section">
-    <h2 className="new-arrivals-title">TOP SELLING</h2>
-    <div className="new-arrivals-row">
-      {products.map((product, idx) => (
-        <ProductCard key={idx} product={product} />
-      ))}
-    </div>
-    <button className="new-arrivals-viewall">View All</button>
-  </section>
-);
+const TopSelling = () => {
+  const navigate = useNavigate();
+  return (
+    <section className="new-arrivals-section">
+      <h2 className="new-arrivals-title">TOP SELLING</h2>
+      <div className="new-arrivals-row">
+        {products.map((product, idx) => (
+          <ProductCard key={idx} product={product} />
+        ))}
+      </div>
+      <button className="new-arrivals-viewall" onClick={() => navigate('/all-products')}>View All</button>
+    </section>
+  );
+};
 
 export default TopSelling; 

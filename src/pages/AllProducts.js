@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PageBanner from '../components/PageBanner';
 import allProductsImg from '../assets/images/allProducts.jpg';
 
 const AllProducts = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div>
       <PageBanner
