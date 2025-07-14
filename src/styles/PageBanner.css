@@ -9,6 +9,15 @@
   width: 100%;
   box-sizing: border-box;
   gap: 32px;
+  position: relative;
+}
+
+.page-banner__breadcrumbs {
+  position: absolute;
+  top: 24px;
+  left: 5vw;
+  z-index: 2;
+  padding: 0;
 }
 
 .page-banner__text {
