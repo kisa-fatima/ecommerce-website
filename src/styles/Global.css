@@ -1001,3 +1001,16 @@
   }
 }
 
+/* Remove autofill background color in Chrome, Edge, Safari */
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  -webkit-text-fill-color: #fff !important;
+  color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+

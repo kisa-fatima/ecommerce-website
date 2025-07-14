@@ -36,6 +36,15 @@ const Login = () => {
     else setMode('login');
   }, [query]);
 
+  useEffect(() => {
+    // Clear all login/signup fields on mount
+    const ids = ['user_email', 'user_password', 'admin_email', 'admin_password', 'signup_email', 'signup_password', 'signup_name'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+  }, [mode, loginType]);
+
   const handleSignupClick = (e) => {
     e.preventDefault();
     navigate('/login?mode=signup');
@@ -116,25 +125,28 @@ const Login = () => {
             onSubmit={values => { /* handle signup */ }}
           >
             {() => (
-              <Form className="signup-form" autoComplete="off"> {/* Turn off autocomplete */}
+              <Form className="signup-form" autoComplete="off">
                 <div className="login-input-group">
                   <span className="login-icon"><FaUser /></span>
-                  <Field type="text" name="name" placeholder="Name" className="login-input" autoComplete="off" />
+                  <Field type="text" name="signup_name" id="signup_name" placeholder="Name" className="login-input" autoComplete="off" readOnly onFocus={e => e.target.removeAttribute('readOnly')} />
                 </div>
-                <ErrorMessage name="name" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="signup_name" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-input-group">
                   <span className="login-icon"><FaEnvelope /></span>
-                  <Field type="email" name="email" placeholder="Email" className="login-input" autoComplete="off" />
+                  <Field type="email" name="signup_email" id="signup_email" placeholder="Email" className="login-input" autoComplete="off" readOnly onFocus={e => e.target.removeAttribute('readOnly')} />
                 </div>
-                <ErrorMessage name="email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="signup_email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-input-group" style={{ position: 'relative' }}>
                   <span className="login-icon"><FaLock /></span>
                   <Field
                     type={showSignupPassword ? 'text' : 'password'}
-                    name="password"
+                    name="signup_password"
+                    id="signup_password"
                     placeholder="Password"
                     className="login-input"
                     autoComplete="off"
+                    readOnly
+                    onFocus={e => e.target.removeAttribute('readOnly')}
                   />
                   <span
                     className="password-eye"
@@ -152,7 +164,7 @@ const Login = () => {
                     {showSignupPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
                 </div>
-                <ErrorMessage name="password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="signup_password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <button type="submit" className="login-btn-main">SIGNUP</button>
                 <div className="login-signup-message">
                   Already have an account? <a href="#" className="login-signup-link" onClick={handleLoginClick}>Login!</a>
@@ -160,31 +172,35 @@ const Login = () => {
               </Form>
             )}
           </Formik>
-        ) : (
+        ) : loginType === 'User' ? (
           <Formik
-            key="login"
+            key="user-login"
             initialValues={{ email: '', password: '' }}
             validationSchema={loginValidationSchema}
-            onSubmit={values => { /* handle login */ }}
+            onSubmit={values => { /* handle user login */ }}
           >
             {() => (
-              <Form className="login-form" autoComplete="off"> {/* Turn off autocomplete */}
+              <Form className="login-form" autoComplete="off">
                 <div className="login-input-group">
                   <span className="login-icon"><FaUser /></span>
                   <Field
                     type="email"
-                    name="email"
+                    name="user_email"
+                    id="user_email"
                     placeholder="Email"
                     className="login-input"
                     autoComplete="off"
+                    readOnly
+                    onFocus={e => e.target.removeAttribute('readOnly')}
                   />
                 </div>
-                <ErrorMessage name="email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="user_email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-input-group" style={{ position: 'relative' }}>
                   <span className="login-icon"><FaLock /></span>
                   <Field
                     type={showPassword ? 'text' : 'password'}
-                    name="password"
+                    name="user_password"
+                    id="user_password"
                     placeholder="Password"
                     className="login-input"
                     autoComplete="off"
@@ -205,7 +221,7 @@ const Login = () => {
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
                 </div>
-                <ErrorMessage name="password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="user_password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-options">
                   <label className="login-remember">
                     <input type="checkbox" /> Remember me
@@ -213,11 +229,71 @@ const Login = () => {
                   <a href="#" className="login-forgot">Forgot Password?</a>
                 </div>
                 <button type="submit" className="login-btn-main">LOGIN</button>
-                {loginType === 'User' ? (
-                  <div className="login-signup-message">
-                    Don't have an account? <a href="#" className="login-signup-link" onClick={handleSignupClick}>Signup!</a>
-                  </div>
-                ) : null}
+                <div className="login-signup-message">
+                  Don't have an account? <a href="#" className="login-signup-link" onClick={handleSignupClick}>Signup!</a>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        ) : (
+          <Formik
+            key="admin-login"
+            initialValues={{ email: '', password: '' }}
+            validationSchema={loginValidationSchema}
+            onSubmit={values => { /* handle admin login */ }}
+          >
+            {() => (
+              <Form className="login-form" autoComplete="off">
+                <div className="login-input-group">
+                  <span className="login-icon"><FaUser /></span>
+                  <Field
+                    type="email"
+                    name="admin_email"
+                    id="admin_email"
+                    placeholder="Email"
+                    className="login-input"
+                    autoComplete="off"
+                    readOnly
+                    onFocus={e => e.target.removeAttribute('readOnly')}
+                  />
+                </div>
+                <ErrorMessage name="admin_email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <div className="login-input-group" style={{ position: 'relative' }}>
+                  <span className="login-icon"><FaLock /></span>
+                  <Field
+                    type={showPassword ? 'text' : 'password'}
+                    name="admin_password"
+                    id="admin_password"
+                    placeholder="Password"
+                    className="login-input"
+                    autoComplete="off"
+                    readOnly
+                    onFocus={e => e.target.removeAttribute('readOnly')}
+                  />
+                  <span
+                    className="password-eye"
+                    style={{
+                      position: 'absolute',
+                      right: 10,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      cursor: 'pointer',
+                      color: '#888',
+                      fontSize: '1.1rem'
+                    }}
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                </div>
+                <ErrorMessage name="admin_password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <div className="login-options">
+                  <label className="login-remember">
+                    <input type="checkbox" /> Remember me
+                  </label>
+                  <a href="#" className="login-forgot">Forgot Password?</a>
+                </div>
+                <button type="submit" className="login-btn-main">LOGIN</button>
               </Form>
             )}
           </Formik>
