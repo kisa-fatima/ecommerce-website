@@ -14,6 +14,8 @@ import Casual from './pages/Casual'
 import Formal from './pages/Formal';
 import Party from './pages/Party';
 import Gym from './pages/Gym';
+import Loader from './components/Loader';
+import React from 'react';
 
 function AppContent() {
   const location = useLocation();
@@ -39,6 +41,17 @@ function AppContent() {
 }
 
 function App() {
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <Router>
       <ScrollToTop />
