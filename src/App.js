@@ -9,6 +9,10 @@ import Kids from './pages/Kids';
 import AllProducts from './pages/AllProducts';
 import Footer from './components/Footer';
 import Login from './pages/Login';
+import Casual from './pages/Casual'
+import Formal from './pages/Formal';
+import Party from './pages/Party';
+import Gym from './pages/Gym';
 
 function AppContent() {
   const location = useLocation();
@@ -23,6 +27,10 @@ function AppContent() {
         <Route path="/kids" element={<Kids />} />
         <Route path="/all-products" element={<AllProducts />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/casual" element={<Casual />} />
+        <Route path="/formal" element={<Formal />} />
+        <Route path="/party" element={<Party />} />
+        <Route path="/gym" element={<Gym />} />
       </Routes>
       {location.pathname !== '/login' && <Footer />}
     </>
