@@ -1,12 +1,12 @@
 import React from 'react';
 import ProductCatalogTable from '../components/ProductCatalogTable';
 
-const AdminProducts = () => {
+const ProductCatalog = () => {
   return (
-    <div style={{ padding: 0 }}>
+    <div style={{ padding: 32 }}>
       <ProductCatalogTable />
     </div>
   );
 };
 
-export default AdminProducts;
+export default ProductCatalog; 
