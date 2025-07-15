@@ -136,7 +136,7 @@
 @media (max-width: 900px) {
   .happy-customers-title {
     font-size: 1rem;
-    margin-bottom: 24px;
+    margin-bottom: 10px;
   }
   .happy-customer-card {
     width: 260px;
@@ -168,7 +168,7 @@
 
 @media (max-width: 600px) {
   .happy-customers-section {
-    padding: 0 16px 24px 16px;
+    padding: 0 16px 0px 16px;
   }
   .happy-customers-title {
     font-size: 0.95rem;
