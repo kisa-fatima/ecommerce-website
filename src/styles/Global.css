@@ -945,33 +945,47 @@ input:-webkit-autofill:active {
   padding-left: 32px !important; /* Make the item appear wider on hover */
 }
 
-.ant-menu-inline .ant-menu-item-selected {
-  background: #111 !important; /* Black highlight for selected item */
-  color: #fff !important;      /* White text for contrast */
+.ant-menu-item-selected {
+  background-color: #111 !important;
+  color: #fff !important;
+}
+
+.ant-menu-item-selected a,
+.ant-menu-item-selected .anticon {
+  color: #fff !important;
 }
 
 /* Make the admin sidebar sticky */
 .admin-sidebar-sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  z-index: 10;
+  position: sticky !important;
+  top: 48px !important;
+  z-index: 99;
   background: #fff;
   border-right: 1px solid #f0f0f0;
 }
 
-/* Ensure parent allows sticky positioning */
-.ant-layout {
+.admin-sidebar-sticky-wrapper {
+  position: sticky;
+  top: 48px;
+  z-index: 99;
+  height: calc(100vh - 48px);
+  background: #fff;
+}
+
+/* Remove overflow from parent layouts if present */
+.ant-layout, .ant-layout-content {
   overflow: visible !important;
 }
 
-@media (max-width: 600px) {
+.admin-content-mobile {
+  background: #fff;
+  min-height: 280px;
+  padding: 24px;
+}
+
+@media (max-width: 900px) {
   .admin-content-mobile {
-    margin-left: 56px;
-    transition: margin-left 0.2s;
-  }
-  .admin-content-mobile.sidebar-expanded {
-    margin-left: 60vw;
+    padding: 20px !important;
   }
 }
 
