@@ -82,7 +82,28 @@
   .product-name {
     font-size: 0.9rem;
     min-height: 2rem;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.15rem;
+  }
+  .product-rating {
+    margin-bottom: 0.15rem;
+  }
+  .product-pricing {
+    gap: 0.1rem;
+  }
+  .discount {
+    font-size: 0.8rem !important;
+    padding: 3px 4px !important;
+    border-radius: 6px !important;
+    margin-left: 2px;
+    min-width: 0 !important;
+    max-width: 40px;
+    box-sizing: border-box;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .old-price {
+    font-size: 0.8rem !important;
+    margin-left: 2px;
   }
 }
 
@@ -172,8 +193,8 @@
 @media (max-width: 600px) {
   .discount {
     font-size: 0.8rem !important;
-    padding: 0 4px !important;
-    border-radius: 4px !important;
+    padding: 3px 4px !important;
+    border-radius: 6px !important;
     margin-left: 2px;
     min-width: 0 !important;
     max-width: 40px;
