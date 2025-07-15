@@ -16,6 +16,7 @@ import Party from './pages/Party';
 import Gym from './pages/Gym';
 import Loader from './components/Loader';
 import React from 'react';
+import AdminPanel from './pages/AdminPanel';
 
 function AppContent() {
   const location = useLocation();
@@ -34,6 +35,7 @@ function AppContent() {
         <Route path="/formal" element={<Formal />} />
         <Route path="/party" element={<Party />} />
         <Route path="/gym" element={<Gym />} />
+        <Route path="/admin/*" element={<AdminPanel />} />
       </Routes>
       {location.pathname !== '/login' && <Footer />}
     </>

@@ -1,0 +1,37 @@
+import React from 'react';
+import { Layout } from 'antd';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import AdminSidebar from '../components/AdminSidebar';
+import AdminDashboard from './AdminDashboard';
+import AdminProducts from './AdminProducts';
+import AdminCategories from './AdminCategories';
+
+const { Content } = Layout;
+
+const CouponsPlaceholder = () => (
+  <div style={{ padding: 32 }}>
+    <h2>Coupons</h2>
+    <p>This feature is coming soon.</p>
+  </div>
+);
+
+const AdminPanel = () => {
+  return (
+    <Layout style={{ minHeight: '100vh' }}>
+      <AdminSidebar />
+      <Layout>
+        <Content style={{ background: '#fff', padding: 24, minHeight: 280 }}>
+          <Routes>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="coupons" element={<CouponsPlaceholder />} />
+            <Route path="*" element={<Navigate to="dashboard" replace />} />
+          </Routes>
+        </Content>
+      </Layout>
+    </Layout>
+  );
+};
+
+export default AdminPanel;
