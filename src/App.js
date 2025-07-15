@@ -17,6 +17,7 @@ import Gym from './pages/Gym';
 import Loader from './components/Loader';
 import React from 'react';
 import AdminPanel from './pages/AdminPanel';
+import ProductPage from './pages/ProductPage';
 
 function AppContent() {
   const location = useLocation();
@@ -36,6 +37,7 @@ function AppContent() {
         <Route path="/party" element={<Party />} />
         <Route path="/gym" element={<Gym />} />
         <Route path="/admin/*" element={<AdminPanel />} />
+        <Route path="/product/:slug" element={<ProductPage />} />
       </Routes>
       {location.pathname !== '/login' && <Footer />}
     </>
