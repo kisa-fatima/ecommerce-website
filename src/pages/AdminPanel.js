@@ -22,8 +22,10 @@ const AdminPanel = () => {
       <Layout>
         <PanelHeader />
         <Layout>
-          <AdminSidebar />
-          <Content className="admin-content-mobile" style={{ background: '#fff', padding: 24, minHeight: 280 }}>
+          <div className="admin-sidebar-sticky-wrapper">
+            <AdminSidebar />
+          </div>
+          <Content className="admin-content-mobile">
             <Routes>
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="products" element={<AdminProducts />} />

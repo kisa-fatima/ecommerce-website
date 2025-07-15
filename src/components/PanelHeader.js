@@ -13,8 +13,9 @@ const PanelHeader = ({ children }) => (
     boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
     minHeight: 48,
     height: 48,
-    position: 'relative',
-    zIndex: 20,
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
     borderBottom: '1px solid #f0f0f0',
   }}>
     <div style={{ display: 'flex', alignItems: 'center' }}>
