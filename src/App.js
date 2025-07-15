@@ -21,10 +21,11 @@ import ProductPage from './pages/ProductPage';
 
 function AppContent() {
   const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
   return (
     <>
-      {location.pathname !== '/login' && <AboveHeader />}
-      {location.pathname !== '/login' && <Header />}
+      {!isAdmin && location.pathname !== '/login' && <AboveHeader />}
+      {!isAdmin && location.pathname !== '/login' && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/women" element={<Women />} />
@@ -39,7 +40,7 @@ function AppContent() {
         <Route path="/admin/*" element={<AdminPanel />} />
         <Route path="/product/:slug" element={<ProductPage />} />
       </Routes>
-      {location.pathname !== '/login' && <Footer />}
+      {!isAdmin && location.pathname !== '/login' && <Footer />}
     </>
   );
 }
