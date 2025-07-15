@@ -11,6 +11,43 @@
   z-index: 9999;
 }
 
+.loader-border {
+  position: fixed;
+  pointer-events: none;
+}
+
+.loader-border-top,
+.loader-border-bottom {
+  left: 1in;
+  right: 1in;
+  height: 1px;
+  background: #000;
+}
+
+.loader-border-top {
+  top: 1in;
+}
+
+.loader-border-bottom {
+  bottom: 1in;
+}
+
+.loader-border-left,
+.loader-border-right {
+  top: 1in;
+  bottom: 1in;
+  width: 1px;
+  background: #000;
+}
+
+.loader-border-left {
+  left: 1in;
+}
+
+.loader-border-right {
+  right: 1in;
+}
+
 .loader-logo {
   width: 80px;
   height: 80px;
