@@ -20,10 +20,11 @@ import AdminPanel from './pages/AdminPanel';
 
 function AppContent() {
   const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
   return (
     <>
-      {location.pathname !== '/login' && <AboveHeader />}
-      {location.pathname !== '/login' && <Header />}
+      {!isAdmin && location.pathname !== '/login' && <AboveHeader />}
+      {!isAdmin && location.pathname !== '/login' && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/women" element={<Women />} />
@@ -37,7 +38,7 @@ function AppContent() {
         <Route path="/gym" element={<Gym />} />
         <Route path="/admin/*" element={<AdminPanel />} />
       </Routes>
-      {location.pathname !== '/login' && <Footer />}
+      {!isAdmin && location.pathname !== '/login' && <Footer />}
     </>
   );
 }

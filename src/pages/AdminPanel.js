@@ -5,6 +5,7 @@ import AdminSidebar from '../components/AdminSidebar';
 import AdminDashboard from './AdminDashboard';
 import AdminProducts from './AdminProducts';
 import AdminCategories from './AdminCategories';
+import PanelHeader from '../components/PanelHeader';
 
 const { Content } = Layout;
 
@@ -18,17 +19,20 @@ const CouponsPlaceholder = () => (
 const AdminPanel = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <AdminSidebar />
       <Layout>
-        <Content style={{ background: '#fff', padding: 24, minHeight: 280 }}>
-          <Routes>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="products" element={<AdminProducts />} />
-            <Route path="categories" element={<AdminCategories />} />
-            <Route path="coupons" element={<CouponsPlaceholder />} />
-            <Route path="*" element={<Navigate to="dashboard" replace />} />
-          </Routes>
-        </Content>
+        <PanelHeader />
+        <Layout>
+          <AdminSidebar />
+          <Content style={{ background: '#fff', padding: 24, minHeight: 280 }}>
+            <Routes>
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="coupons" element={<CouponsPlaceholder />} />
+              <Route path="*" element={<Navigate to="dashboard" replace />} />
+            </Routes>
+          </Content>
+        </Layout>
       </Layout>
     </Layout>
   );
