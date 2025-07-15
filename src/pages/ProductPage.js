@@ -8,8 +8,9 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const product = state?.product;
 
-  // Move hooks to the top, use fallback values if product is undefined
-  const [mainImg, setMainImg] = useState(product?.image1 || '');
+  // Always show three images: thumbnail, image1, image2
+  const galleryImages = [product?.thumbnail, product?.image1, product?.image2];
+  const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState('Large');
   const [quantity, setQuantity] = useState(1);
@@ -25,18 +26,18 @@ const ProductPage = () => {
   return (
     <div className="productpage-container">
       <div className="productpage-gallery">
-        {[product.image1, product.image2, product.image3].map((img, idx) => (
+        {galleryImages.map((img, idx) => (
           <div
             key={idx}
-            className={`productpage-thumb${mainImg === img ? ' selected' : ''}`}
-            onClick={() => setMainImg(img)}
+            className={`productpage-thumb${selectedImgIdx === idx ? ' selected' : ''}`}
+            onClick={() => setSelectedImgIdx(idx)}
           >
             <img src={img} alt={`thumb-${idx}`} />
           </div>
         ))}
       </div>
       <div className="productpage-mainimg">
-        <img src={mainImg} alt="main" />
+        <img src={galleryImages[selectedImgIdx]} alt="main" />
       </div>
       <div className="productpage-details">
         <div className="productpage-breadcrumbs">
