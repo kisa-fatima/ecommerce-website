@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/ProductPage.css';
 import Breadcrumbs from '../components/Breadcrumbs';
 
+const isMobile = () => window.innerWidth <= 900;
+
 const ProductPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -14,10 +16,17 @@ const ProductPage = () => {
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState('Large');
   const [quantity, setQuantity] = useState(1);
+  const [mobile, setMobile] = useState(isMobile());
+
+  React.useEffect(() => {
+    const handleResize = () => setMobile(isMobile());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Placeholder colors and sizes
-  const colors = ['#4B473A', '#2B3A3A', '#2B3A4B'];
   const sizes = ['Small', 'Medium', 'Large', 'X-Large'];
+  const sizeShort = ['S', 'M', 'L', 'XL'];
 
   if (!product) {
     return <div style={{ padding: 40 }}>Product not found. <button onClick={() => navigate(-1)}>Go Back</button></div>;
@@ -67,7 +76,7 @@ const ProductPage = () => {
         <div className="productpage-section">
           <div className="section-label">Select Colors</div>
           <div className="color-options">
-            {colors.map((color, idx) => (
+            {['#4B473A', '#2B3A3A', '#2B3A4B'].map((color, idx) => (
               <span
                 key={color}
                 className={`color-dot${selectedColor === idx ? ' selected' : ''}`}
@@ -80,11 +89,11 @@ const ProductPage = () => {
         <div className="productpage-section">
           <div className="section-label">Choose Size</div>
           <div className="size-options">
-            {sizes.map((size) => (
+            {(mobile ? sizeShort : sizes).map((size, idx) => (
               <span
                 key={size}
-                className={`size-btn${selectedSize === size ? ' selected' : ''}`}
-                onClick={() => setSelectedSize(size)}
+                className={`size-btn${selectedSize === sizes[idx] ? ' selected' : ''}`}
+                onClick={() => setSelectedSize(sizes[idx])}
               >
                 {size}
               </span>
