@@ -159,10 +159,33 @@
   color: #ff4444;
   font-size: 0.9rem;
   font-weight: 500;
+  background: #ffeaea;
+  border-radius: 8px;
+  padding: 2px 8px;
+  margin-left: 2px;
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 60px;
+  white-space: nowrap;
 }
 
 @media (max-width: 600px) {
   .discount {
-    font-size: 0.7rem;
+    font-size: 0.8rem !important;
+    padding: 0 4px !important;
+    border-radius: 4px !important;
+    margin-left: 2px;
+    min-width: 0 !important;
+    max-width: 40px;
+    box-sizing: border-box;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .old-price {
+    font-size: 0.8rem !important;
+    margin-left: 2px;
+  }
+  .product-pricing {
+    gap: 0.2rem;
   }
 }
