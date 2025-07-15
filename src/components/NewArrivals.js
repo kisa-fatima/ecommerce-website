@@ -57,7 +57,7 @@ const products = [
     image2: 'https://via.placeholder.com/300x300?text=Striped+T-shirt+Side',
     quantity: 0,
     inStock: false,
-    category: 'women',
+    category: 'kids',
     state: true, // visible
   },
 ];

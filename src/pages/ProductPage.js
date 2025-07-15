@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/ProductPage.css';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 const ProductPage = () => {
   const { state } = useLocation();
@@ -39,7 +40,13 @@ const ProductPage = () => {
       </div>
       <div className="productpage-details">
         <div className="productpage-breadcrumbs">
-          Home &gt; Shop &gt; {product.category.charAt(0).toUpperCase() + product.category.slice(1)} &gt; {product.name}
+          <Breadcrumbs
+            paths={[
+              { name: 'Home', link: '/' },
+              { name: product.category.charAt(0).toUpperCase() + product.category.slice(1), link: `/${product.category}` },
+              { name: product.name, link: '' }
+            ]}
+          />
         </div>
         <h1 className="productpage-title">{product.name}</h1>
         <div className="productpage-rating">
