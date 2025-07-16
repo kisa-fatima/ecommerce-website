@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, Select, Upload, Button, InputNumber, Checkbox } from 'antd';
+import { Modal, Form, Input, Select, Upload, Button, InputNumber, Checkbox, Row, Col } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { useEffect } from 'react';
+import { getAllCategoriesFlat } from '../services/databaseFunctions';
+import { useRef } from 'react';
 
 const { Option } = Select;
 
@@ -14,11 +17,42 @@ const AddProductModal = ({ visible, onCancel, onAdd }) => {
   const [image1List, setImage1List] = useState([]);
   const [image2List, setImage2List] = useState([]);
   const [discountFlag, setDiscountFlag] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [rootOptions, setRootOptions] = useState([]);
+  const [childOptions, setChildOptions] = useState([]);
+  const [grandchildOptions, setGrandchildOptions] = useState([]);
+  const [selectedRoot, setSelectedRoot] = useState(null);
+  const [selectedChild, setSelectedChild] = useState(null);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      const cats = await getAllCategoriesFlat();
+      setCategories(cats);
+      setRootOptions(cats.filter(cat => !cat.parentID));
+    }
+    fetchCategories();
+  }, []);
+
+  const handleRootChange = (val) => {
+    setSelectedRoot(val);
+    setSelectedChild(null);
+    setGrandchildOptions([]);
+    setChildOptions(categories.filter(cat => cat.parentID === val));
+    form.setFieldsValue({ category: undefined, childCategory: undefined, grandchildCategory: undefined });
+  };
+  const handleChildChange = (val) => {
+    setSelectedChild(val);
+    setGrandchildOptions(categories.filter(cat => cat.parentID === val));
+    form.setFieldsValue({ grandchildCategory: undefined });
+  };
 
   const handleOk = () => {
     form.validateFields().then(values => {
+      // Determine the selected category ID (grandchild > child > root)
+      let categoryId = values.grandchildCategory || values.childCategory || values.rootCategory;
       onAdd({
         ...values,
+        category: categoryId,
         discountFlag,
         thumbnail: thumbnailList[0],
         image1: image1List[0],
@@ -29,6 +63,10 @@ const AddProductModal = ({ visible, onCancel, onAdd }) => {
       setImage1List([]);
       setImage2List([]);
       setDiscountFlag(false);
+      setSelectedRoot(null);
+      setSelectedChild(null);
+      setChildOptions([]);
+      setGrandchildOptions([]);
     });
   };
 
@@ -40,6 +78,10 @@ const AddProductModal = ({ visible, onCancel, onAdd }) => {
     setImage1List([]);
     setImage2List([]);
     setDiscountFlag(false);
+    setSelectedRoot(null);
+    setSelectedChild(null);
+    setChildOptions([]);
+    setGrandchildOptions([]);
     onCancel();
   };
 
@@ -48,9 +90,39 @@ const AddProductModal = ({ visible, onCancel, onAdd }) => {
       title="Add Product"
       open={visible}
       onCancel={safeCancel}
-      onOk={handleOk}
-      okText="Add"
-      cancelText="Cancel"
+      footer={[
+        <Button
+          key="cancel"
+          onClick={safeCancel}
+          style={{
+            background: '#f5f5f5',
+            color: '#111',
+            border: '1.5px solid #bbb',
+            boxShadow: 'none',
+            fontWeight: 500
+          }}
+          onMouseOver={e => {
+            e.currentTarget.style.border = '1.5px solid #111';
+            e.currentTarget.style.color = '#111';
+          }}
+          onMouseOut={e => {
+            e.currentTarget.style.border = '1.5px solid #bbb';
+            e.currentTarget.style.color = '#111';
+          }}
+        >
+          Cancel
+        </Button>,
+        <Button
+          key="add"
+          type="primary"
+          onClick={handleOk}
+          style={{ background: '#111', color: '#fff', border: 'none', fontWeight: 500 }}
+          onMouseOver={e => e.currentTarget.style.background = '#888'}
+          onMouseOut={e => e.currentTarget.style.background = '#111'}
+        >
+          Add
+        </Button>
+      ]}
       destroyOnClose
     >
       <Form form={form} layout="vertical">
@@ -66,29 +138,51 @@ const AddProductModal = ({ visible, onCancel, onAdd }) => {
         <Form.Item name="quantity" label="Quantity" rules={[{ required: true, message: 'Please enter quantity' }]}> 
           <InputNumber min={0} style={{ width: '100%' }} placeholder="Enter quantity" />
         </Form.Item>
-        <Form.Item label="Discount?" valuePropName="checked">
-          <Checkbox checked={discountFlag} onChange={e => setDiscountFlag(e.target.checked)}>Discount</Checkbox>
+        <Form.Item label="Discount?" style={{ marginBottom: 15 }}>
+          <Row align="middle" gutter={8}>
+            <Col>
+              <Checkbox checked={discountFlag} onChange={e => setDiscountFlag(e.target.checked)}>Discount</Checkbox>
+            </Col>
+            {discountFlag && (
+              <Col>
+                <Form.Item
+                  name="discountPercentage"
+                  noStyle
+                  rules={[{ required: true, message: 'Please enter discount percentage' }]}
+                >
+                  <InputNumber min={0} max={100} style={{ width: 120 }} placeholder="%" />
+                </Form.Item>
+              </Col>
+            )}
+          </Row>
         </Form.Item>
-        {discountFlag && (
-          <Form.Item name="discountPercentage" label="Discount Percentage" rules={[{ required: true, message: 'Please enter discount percentage' }]}> 
-            <InputNumber min={0} max={100} style={{ width: '100%' }} placeholder="Enter discount percentage" />
-          </Form.Item>
-        )}
-        <Form.Item name="category" label="Category" rules={[{ required: true, message: 'Please select category' }]}> 
-          <Select placeholder="Select category">
-            {categoryOptions.map(cat => <Option key={cat} value={cat}>{cat}</Option>)}
-          </Select>
-        </Form.Item>
-        <Form.Item name="type" label="Type" rules={[{ required: true, message: 'Please select type' }]}> 
-          <Select placeholder="Select type">
-            {typeOptions.map(type => <Option key={type} value={type}>{type}</Option>)}
-          </Select>
-        </Form.Item>
-        <Form.Item name="section" label="Section" rules={[{ required: true, message: 'Please select section' }]}> 
-          <Select placeholder="Select section">
-            {sectionOptions.map(section => <Option key={section} value={section}>{section}</Option>)}
-          </Select>
-        </Form.Item>
+        <Row gutter={12}>
+          <Col span={8}>
+            <Form.Item name="rootCategory" label="Category" rules={[{ required: true, message: 'Please select a root category' }]}> 
+              <Select placeholder="Select root category" onChange={handleRootChange} value={selectedRoot} allowClear>
+                {rootOptions.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            {childOptions.length > 0 && (
+              <Form.Item name="childCategory" label="Style" rules={[{ required: false }]}> 
+                <Select placeholder="Select style" onChange={handleChildChange} value={selectedChild} allowClear>
+                  {childOptions.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
+                </Select>
+              </Form.Item>
+            )}
+          </Col>
+          <Col span={8}>
+            {grandchildOptions.length > 0 && (
+              <Form.Item name="grandchildCategory" label="type" rules={[{ required: false }]}> 
+                <Select placeholder="Select sub-subcategory" allowClear>
+                  {grandchildOptions.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
+                </Select>
+              </Form.Item>
+            )}
+          </Col>
+        </Row>
         <Form.Item name="thumbnail" label="Thumbnail Image" rules={[{ required: true, message: 'Please upload a thumbnail image' }]}> 
           <Upload
             beforeUpload={() => false}

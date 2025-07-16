@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/ProductPage.css';
 import Breadcrumbs from '../components/Breadcrumbs';
+import { getCategoryPathById } from '../services/databaseFunctions';
 
 const isMobile = () => window.innerWidth <= 900;
 
@@ -9,6 +10,7 @@ const ProductPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const product = state?.product;
+  const [categoryPath, setCategoryPath] = useState([]);
 
   // Always show three images: thumbnail, image1, image2
   const galleryImages = [product?.thumbnail, product?.image1, product?.image2];
@@ -24,6 +26,18 @@ const ProductPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  React.useEffect(() => {
+    async function fetchCategoryPath() {
+      if (product?.category) {
+        const path = await getCategoryPathById(product.category);
+        setCategoryPath(path);
+      } else {
+        setCategoryPath([]);
+      }
+    }
+    fetchCategoryPath();
+  }, [product]);
+
   // Placeholder colors and sizes
   const colors = ['#4B473A', '#2B3A3A', '#2B3A4B'];
   const sizes = ['Small', 'Medium', 'Large', 'X-Large'];
@@ -32,13 +46,17 @@ const ProductPage = () => {
     return <div style={{ padding: 40 }}>Product not found. <button onClick={() => navigate(-1)}>Go Back</button></div>;
   }
 
-  // Build breadcrumbs from category array
-  const categoryArr = Array.isArray(product.category) ? product.category : [product.category || 'Category'];
+  // Build breadcrumbs from categoryPath
+  const rootCategoryLinks = {
+    Women: '/women',
+    Men: '/men',
+    Kids: '/kids',
+  };
   const breadcrumbPaths = [
     { name: 'Home', link: '/' },
-    ...categoryArr.map((cat, idx) => ({
-      name: typeof cat === 'string' ? cat.charAt(0).toUpperCase() + cat.slice(1) : 'Category',
-      link: '/' + categoryArr.slice(0, idx + 1).join('/'),
+    ...categoryPath.map((cat, idx) => ({
+      name: cat.charAt(0).toUpperCase() + cat.slice(1),
+      link: idx === 0 && rootCategoryLinks[cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase()] ? rootCategoryLinks[cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase()] : '#',
     })),
     { name: product.name, link: '' }
   ];
