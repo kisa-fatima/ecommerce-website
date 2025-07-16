@@ -46,11 +46,11 @@ const Women = () => {
     const styleId = params.get('style');
     const typeId = params.get('type');
     setFiltered(products.filter(p => {
-      if (!p.category) return false;
-      const ancestors = catMap[p.category] || [];
+      if (!p.categoryID) return false;
+      const ancestors = catMap[p.categoryID] || [];
       // If All (no style selected) and a type name is selected, match by type name
       if ((!styleId || styleId === 'all') && typeId && typeId !== 'all') {
-        return catIdToName[p.category] && catIdToName[p.category].toLowerCase() === typeId.toLowerCase();
+        return catIdToName[p.categoryID] && catIdToName[p.categoryID].toLowerCase() === typeId.toLowerCase();
       }
       if (typeId && typeId !== 'all') return ancestors.includes(typeId);
       if (styleId && styleId !== 'all') return ancestors.includes(styleId);

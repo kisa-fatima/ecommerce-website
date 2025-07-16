@@ -28,8 +28,8 @@ const ProductPage = () => {
 
   React.useEffect(() => {
     async function fetchCategoryPath() {
-      if (product?.category) {
-        const path = await getCategoryPathById(product.category);
+      if (product?.categoryID) {
+        const path = await getCategoryPathById(product.categoryID);
         setCategoryPath(path);
       } else {
         setCategoryPath([]);

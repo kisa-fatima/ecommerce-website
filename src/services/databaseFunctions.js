@@ -87,8 +87,8 @@ export async function updateAllProductsCategoryNames() {
   const products = productSnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
   for (const product of products) {
     let categoryName = '', typeName = '', sectionName = '';
-    if (product.category) {
-      const arr = await getCategoryPathById(product.category);
+    if (product.categoryID) {
+      const arr = await getCategoryPathById(product.categoryID);
       categoryName = arr[arr.length - 1] || '';
     }
     if (product.type) {
