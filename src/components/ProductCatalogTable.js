@@ -2,69 +2,6 @@ import React from 'react';
 import { Table, Tag, Tooltip, Button } from 'antd';
 import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 
-const data = [
-  {
-    key: 1,
-    name: 'Item no.1',
-    category: 'Men',
-    type: 'Gym',
-    ordered: 2,
-    revenue: 59,
-    catalog: 'Active',
-    stock: 'In stock',
-  },
-  {
-    key: 2,
-    name: 'Item no.2',
-    category: 'Men',
-    type: 'Party',
-    ordered: 5,
-    revenue: 113,
-    catalog: 'Deleted',
-    stock: 'Out of stock',
-  },
-  {
-    key: 3,
-    name: 'Item no.3',
-    category: 'Women',
-    type: 'Formal',
-    ordered: 0,
-    revenue: 0,
-    catalog: 'Active',
-    stock: 'In stock',
-  },
-  {
-    key: 4,
-    name: 'Item no.4',
-    category: 'Women',
-    type: 'Casual',
-    ordered: 0,
-    revenue: 0,
-    catalog: 'Out of stock',
-    stock: 'Out of stock',
-  },
-  {
-    key: 5,
-    name: 'Item no.5',
-    category: 'Kids',
-    type: 'Gym',
-    ordered: 0,
-    revenue: 0,
-    catalog: 'Inactive',
-    stock: 'Out of stock',
-  },
-  {
-    key: 6,
-    name: 'Item no.6',
-    category: 'Kids',
-    type: 'Party',
-    ordered: 12,
-    revenue: 231,
-    catalog: 'Inactive',
-    stock: 'In stock',
-  },
-];
-
 const CatalogStatus = ({ status }) => {
   let color = 'green';
   if (status === 'Deleted') color = 'red';
@@ -94,32 +31,52 @@ const columns = [
   {
     title: 'Category',
     dataIndex: 'category',
-    sorter: (a, b) => a.category.localeCompare(b.category),
+    render: (catArr) => Array.isArray(catArr) && catArr[0] ? catArr[0].charAt(0).toUpperCase() + catArr[0].slice(1) : '',
+    sorter: (a, b) => {
+      const aCat = Array.isArray(a.category) && a.category[0] ? a.category[0] : '';
+      const bCat = Array.isArray(b.category) && b.category[0] ? b.category[0] : '';
+      return aCat.localeCompare(bCat);
+    },
+  },
+  {
+    title: 'Sub-category',
+    dataIndex: 'category',
+    render: (catArr) => Array.isArray(catArr) && catArr[2] ? catArr[2].charAt(0).toUpperCase() + catArr[2].slice(1) : '',
+    sorter: (a, b) => {
+      const aSub = Array.isArray(a.category) && a.category[2] ? a.category[2] : '';
+      const bSub = Array.isArray(b.category) && b.category[2] ? b.category[2] : '';
+      return aSub.localeCompare(bSub);
+    },
   },
   {
     title: 'Type',
-    dataIndex: 'type',
-    sorter: (a, b) => a.type.localeCompare(b.type),
+    dataIndex: 'category',
+    render: (catArr) => Array.isArray(catArr) && catArr[1] ? catArr[1].charAt(0).toUpperCase() + catArr[1].slice(1) : '',
+    sorter: (a, b) => {
+      const aType = Array.isArray(a.category) && a.category[1] ? a.category[1] : '';
+      const bType = Array.isArray(b.category) && b.category[1] ? b.category[1] : '';
+      return aType.localeCompare(bType);
+    },
   },
   {
     title: 'Ordered Items',
     dataIndex: 'ordered',
-    sorter: (a, b) => a.ordered - b.ordered,
+    sorter: (a, b) => (a.ordered || 0) - (b.ordered || 0),
   },
   {
     title: 'Revenue',
     dataIndex: 'revenue',
-    sorter: (a, b) => a.revenue - b.revenue,
+    sorter: (a, b) => (a.revenue || 0) - (b.revenue || 0),
   },
   {
     title: 'Catalog...',
     dataIndex: 'catalog',
-    render: (status) => <CatalogStatus status={status} />,
+    render: (status) => <CatalogStatus status={status} />, // You may want to map your Firestore field
   },
   {
     title: 'Stock status',
-    dataIndex: 'stock',
-    render: (status) => <StockStatus status={status} />,
+    dataIndex: 'inStock',
+    render: (inStock) => <StockStatus status={inStock ? 'In stock' : 'Out of stock'} />,
   },
   {
     title: '',
@@ -128,7 +85,18 @@ const columns = [
   },
 ];
 
-const ProductCatalogTable = () => {
+const ProductCatalogTable = ({ products }) => {
+  // Map Firestore product fields to table fields
+  const data = (products || []).map((p, idx) => ({
+    key: p.id || idx,
+    name: p.name,
+    category: p.category,
+    ordered: p.ordered || 0,
+    revenue: p.revenue || 0,
+    catalog: p.catalog || 'Active',
+    inStock: p.inStock,
+  }));
+
   return (
     <Table
       columns={columns}
