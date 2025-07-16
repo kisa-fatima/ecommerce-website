@@ -1,28 +1,64 @@
 import React, { useEffect, useState } from 'react';
 import PageBanner from '../components/PageBanner';
 import womenImg from '../assets/images/women.jpg';
+import TypeSelection from '../components/TypeSelection';
+import { getAllProducts, getAllCategoriesFlat } from '../services/databaseFunctions';
 import ProductCard from '../components/ProductCard';
-import { getAllProducts } from '../services/databaseFunctions';
+import { useLocation } from 'react-router-dom';
 
 const Women = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [filtered, setFiltered] = useState([]);
+  const [catMap, setCatMap] = useState({});
+  const [catIdToName, setCatIdToName] = useState({});
+  const location = useLocation();
+  const [womenRootId, setWomenRootId] = useState(null);
 
   useEffect(() => {
-    async function fetchProducts() {
-      setLoading(true);
-      try {
-        const data = await getAllProducts();
-        // Filter for products where category name is 'Women' (resolve root category)
-        const womenProducts = data.filter(p => p.categoryName && p.categoryName.toLowerCase() === 'women');
-        setProducts(womenProducts);
-      } catch (err) {
-        setProducts([]);
-      }
-      setLoading(false);
+    async function fetchProductsAndCats() {
+      const all = await getAllProducts();
+      setProducts(all);
+      const cats = await getAllCategoriesFlat();
+      // Build a map: categoryId -> [ancestorIds...]
+      const idToAncestors = {};
+      const idToName = {};
+      cats.forEach(cat => {
+        let path = [];
+        let current = cat;
+        while (current) {
+          path.unshift(current.id);
+          current = cats.find(c => c.id === current.parentID);
+        }
+        idToAncestors[cat.id] = path;
+        idToName[cat.id] = cat.name;
+      });
+      setCatMap(idToAncestors);
+      setCatIdToName(idToName);
+      // Find the root category ID for Women
+      const womenRoot = cats.find(cat => cat.name.toLowerCase() === 'women' && !cat.parentID);
+      setWomenRootId(womenRoot ? womenRoot.id : null);
     }
-    fetchProducts();
+    fetchProductsAndCats();
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const styleId = params.get('style');
+    const typeId = params.get('type');
+    setFiltered(products.filter(p => {
+      if (!p.category) return false;
+      const ancestors = catMap[p.category] || [];
+      // If All (no style selected) and a type name is selected, match by type name
+      if ((!styleId || styleId === 'all') && typeId && typeId !== 'all') {
+        return catIdToName[p.category] && catIdToName[p.category].toLowerCase() === typeId.toLowerCase();
+      }
+      if (typeId && typeId !== 'all') return ancestors.includes(typeId);
+      if (styleId && styleId !== 'all') return ancestors.includes(styleId);
+      // For root, show all products under Women
+      if (womenRootId) return ancestors.includes(womenRootId);
+      return false;
+    }));
+  }, [products, location, catMap, womenRootId, catIdToName]);
 
   return (
     <div>
@@ -31,18 +67,9 @@ const Women = () => {
         title="Women"
         description="Discover our curated collection of women's fashion designed to empower every style. From breezy summer dresses to bold leather jackets, explore outfits made for work, weekends, and everything in between. Whether you're dressing up or keeping it casual, find the perfect blend of comfort, confidence, and charm."
       />
-      <div style={{ maxWidth: 1200, margin: '32px auto', padding: '0 16px' }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: 40 }}>Loading products...</div>
-        ) : products.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 40 }}>No products found.</div>
-        ) : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center' }}>
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
+      <TypeSelection rootCategoryName="Women" />
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
+        {filtered.map(product => <ProductCard key={product.id} product={product} />)}
       </div>
     </div>
   );

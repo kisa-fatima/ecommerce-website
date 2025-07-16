@@ -54,6 +54,25 @@ export async function getCategoryPathById(categoryId) {
   return path;
 }
 
+// Given a category ID, return the full path from root to that category as an array of IDs
+export async function getCategoryPathIdsById(categoryId) {
+  const categoriesCol = collection(db, 'categories');
+  const categorySnapshot = await getDocs(categoriesCol);
+  const flatCategories = categorySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const idToCategory = {};
+  flatCategories.forEach(cat => {
+    idToCategory[cat.id] = { ...cat };
+  });
+  let path = [];
+  let current = idToCategory[categoryId];
+  while (current) {
+    path.unshift(current.id);
+    if (!current.parentID) break;
+    current = idToCategory[current.parentID];
+  }
+  return path;
+}
+
 // Get all categories as a flat array
 export async function getAllCategoriesFlat() {
   const categoriesCol = collection(db, 'categories');

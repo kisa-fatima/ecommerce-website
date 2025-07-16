@@ -1,28 +1,64 @@
 import React, { useEffect, useState } from 'react';
 import PageBanner from '../components/PageBanner';
 import menImg from '../assets/images/men.jpg';
+import TypeSelection from '../components/TypeSelection';
+import { getAllProducts, getAllCategoriesFlat } from '../services/databaseFunctions';
 import ProductCard from '../components/ProductCard';
-import { getAllProducts } from '../services/databaseFunctions';
+import { useLocation } from 'react-router-dom';
 
 const Men = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [filtered, setFiltered] = useState([]);
+  const [catMap, setCatMap] = useState({});
+  const [catIdToName, setCatIdToName] = useState({});
+  const location = useLocation();
+  const [menRootId, setMenRootId] = useState(null);
 
   useEffect(() => {
-    async function fetchProducts() {
-      setLoading(true);
-      try {
-        const data = await getAllProducts();
-        // Filter for products where category name is 'Men' (resolve root category)
-        const menProducts = data.filter(p => p.categoryName && p.categoryName.toLowerCase() === 'men');
-        setProducts(menProducts);
-      } catch (err) {
-        setProducts([]);
-      }
-      setLoading(false);
+    async function fetchProductsAndCats() {
+      const all = await getAllProducts();
+      setProducts(all);
+      const cats = await getAllCategoriesFlat();
+      // Build a map: categoryId -> [ancestorIds...]
+      const idToAncestors = {};
+      const idToName = {};
+      cats.forEach(cat => {
+        let path = [];
+        let current = cat;
+        while (current) {
+          path.unshift(current.id);
+          current = cats.find(c => c.id === current.parentID);
+        }
+        idToAncestors[cat.id] = path;
+        idToName[cat.id] = cat.name;
+      });
+      setCatMap(idToAncestors);
+      setCatIdToName(idToName);
+      // Find the root category ID for Men
+      const menRoot = cats.find(cat => cat.name.toLowerCase() === 'men' && !cat.parentID);
+      setMenRootId(menRoot ? menRoot.id : null);
     }
-    fetchProducts();
+    fetchProductsAndCats();
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const styleId = params.get('style');
+    const typeId = params.get('type');
+    setFiltered(products.filter(p => {
+      if (!p.category) return false;
+      const ancestors = catMap[p.category] || [];
+      // If All (no style selected) and a type name is selected, match by type name
+      if ((!styleId || styleId === 'all') && typeId && typeId !== 'all') {
+        return catIdToName[p.category] && catIdToName[p.category].toLowerCase() === typeId.toLowerCase();
+      }
+      if (typeId && typeId !== 'all') return ancestors.includes(typeId);
+      if (styleId && styleId !== 'all') return ancestors.includes(styleId);
+      // For root, show all products under Men
+      if (menRootId) return ancestors.includes(menRootId);
+      return false;
+    }));
+  }, [products, location, catMap, menRootId, catIdToName]);
 
   return (
     <div>
@@ -31,18 +67,9 @@ const Men = () => {
         title="MEN"
         description="Step up your wardrobe with our curated men’s collection — from sharp shirts and classic denim to laid-back tees and cozy essentials. Whether it’s work, weekends, or workouts, find high-quality pieces designed for comfort, durability, and timeless style."
       />
-      <div style={{ maxWidth: 1200, margin: '32px auto', padding: '0 16px' }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: 40 }}>Loading products...</div>
-        ) : products.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 40 }}>No products found.</div>
-        ) : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center' }}>
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
+      <TypeSelection rootCategoryName="Men" />
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
+        {filtered.map(product => <ProductCard key={product.id} product={product} />)}
       </div>
     </div>
   );

@@ -1,1 +1,38 @@
+.type-selection-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24px 0 16px 0;
+}
 
+.type-selection-btn {
+  font-weight: 500;
+  border-radius: 30px;
+  padding: 0 36px;
+  height: 44px;
+  font-size: 1.08rem;
+  background: #fff;
+  border: 1.5px solid #eee;
+  color: #222;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  margin-right: 26px;
+}
+
+.type-selection-btn:last-child {
+  margin-right: 0;
+}
+
+.type-selection-btn:hover, .type-selection-btn:focus {
+  background: #f0f0f0 !important;
+  color: #111 !important;
+  border: 1.5px solid #bbb !important;
+}
+
+.type-selection-btn.ant-btn-primary,
+.type-selection-btn.ant-btn-primary:hover,
+.type-selection-btn.ant-btn-primary:focus,
+.type-selection-btn.ant-btn-primary:active {
+  background: #111 !important;
+  color: #fff !important;
+  border: 1.5px solid #111 !important;
+}
