@@ -18,7 +18,6 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
   // Parse selected style from URL
   const params = new URLSearchParams(location.search);
   const selectedStyle = params.get('style') || 'all';
-  // Remove selectedType from URL parsing, use local state instead
 
   useEffect(() => {
     async function fetchCategories() {
@@ -34,18 +33,31 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
   }, [rootCategoryName]);
 
   useEffect(() => {
-    if (selectedStyle !== 'all' && allCategories.length > 0) {
-      setTypeCategories(allCategories.filter(cat => cat.parentID === selectedStyle));
-      setSelectedType('all'); // Only reset when style changes
+    if (allCategories.length > 0 && rootCategory) {
+      if (selectedStyle === 'all') {
+        // Show each unique type (by name) only once across all subcategories
+        const allStyleIds = allCategories.filter(cat => cat.parentID === rootCategory.id).map(cat => cat.id);
+        const allTypes = allCategories.filter(cat => allStyleIds.includes(cat.parentID));
+        // Deduplicate by name
+        const uniqueTypes = [];
+        const seenNames = new Set();
+        allTypes.forEach(type => {
+          if (!seenNames.has(type.name)) {
+            uniqueTypes.push(type);
+            seenNames.add(type.name);
+          }
+        });
+        setTypeCategories(uniqueTypes);
+      } else {
+        setTypeCategories(allCategories.filter(cat => cat.parentID === selectedStyle));
+      }
+      setSelectedType('all');
       // Remove type from URL
       const params = new URLSearchParams(location.search);
       params.delete('type');
       navigate({ search: params.toString() }, { replace: true });
-    } else {
-      setTypeCategories([]);
-      setSelectedType('all');
     }
-  }, [selectedStyle]);
+  }, [selectedStyle, allCategories, rootCategory]);
 
   const handleStyleSelect = (styleId) => {
     const params = new URLSearchParams(location.search);
@@ -60,6 +72,7 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
     if (onSelect) onSelect(styleId, null);
   };
 
+  // When 'All' is selected, typeId is a type name; otherwise, it's a category id
   const handleTypeSelect = (typeId) => {
     setSelectedType(typeId || 'all');
     const params = new URLSearchParams(location.search);
@@ -93,7 +106,7 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
           </Button>
         ))}
       </div>
-      {typeCategories.length > 0 && selectedStyle !== 'all' && (
+      {typeCategories.length > 0 && (
         <div style={{ position: 'absolute', right: 20, minWidth: 180 }}>
           <Select
             value={selectedType}
@@ -102,9 +115,13 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
             style={{ width: '100%' }}
           >
             <Option value="all">All</Option>
-            {typeCategories.map(typecat => (
-              <Option key={typecat.id} value={typecat.id}>{typecat.name}</Option>
-            ))}
+            {selectedStyle === 'all'
+              ? typeCategories.map(typecat => (
+                  <Option key={typecat.name} value={typecat.name}>{typecat.name}</Option>
+                ))
+              : typeCategories.map(typecat => (
+                  <Option key={typecat.id} value={typecat.id}>{typecat.name}</Option>
+                ))}
           </Select>
         </div>
       )}

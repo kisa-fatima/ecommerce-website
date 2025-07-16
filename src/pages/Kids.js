@@ -11,7 +11,9 @@ const Kids = () => {
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [catMap, setCatMap] = useState({});
+  const [catIdToName, setCatIdToName] = useState({});
   const location = useLocation();
+  const [kidsRootId, setKidsRootId] = useState(null);
 
   useEffect(() => {
     async function fetchProductsAndCats() {
@@ -20,6 +22,7 @@ const Kids = () => {
       const cats = await getAllCategoriesFlat();
       // Build a map: categoryId -> [ancestorIds...]
       const idToAncestors = {};
+      const idToName = {};
       cats.forEach(cat => {
         let path = [];
         let current = cat;
@@ -28,8 +31,10 @@ const Kids = () => {
           current = cats.find(c => c.id === current.parentID);
         }
         idToAncestors[cat.id] = path;
+        idToName[cat.id] = cat.name;
       });
       setCatMap(idToAncestors);
+      setCatIdToName(idToName);
       // Find the root category ID for Kids
       const kidsRoot = cats.find(cat => cat.name.toLowerCase() === 'kids' && !cat.parentID);
       setKidsRootId(kidsRoot ? kidsRoot.id : null);
@@ -37,7 +42,6 @@ const Kids = () => {
     fetchProductsAndCats();
   }, []);
 
-  const [kidsRootId, setKidsRootId] = useState(null);
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const styleId = params.get('style');
@@ -45,13 +49,17 @@ const Kids = () => {
     setFiltered(products.filter(p => {
       if (!p.category) return false;
       const ancestors = catMap[p.category] || [];
-      if (typeId) return ancestors.includes(typeId);
-      if (styleId) return ancestors.includes(styleId);
+      // If All (no style selected) and a type name is selected, match by type name
+      if ((!styleId || styleId === 'all') && typeId && typeId !== 'all') {
+        return catIdToName[p.category] && catIdToName[p.category].toLowerCase() === typeId.toLowerCase();
+      }
+      if (typeId && typeId !== 'all') return ancestors.includes(typeId);
+      if (styleId && styleId !== 'all') return ancestors.includes(styleId);
       // For root, show all products under Kids
       if (kidsRootId) return ancestors.includes(kidsRootId);
       return false;
     }));
-  }, [products, location, catMap, kidsRootId]);
+  }, [products, location, catMap, kidsRootId, catIdToName]);
 
   return (
     <div>
