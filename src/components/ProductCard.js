@@ -17,11 +17,9 @@ const ProductCard = ({ product }) => {
     discountPercentage,
     thumbnail,
     inStock,
-    state
+    state,
+    rating
   } = product;
-
-  // Placeholder rating for now
-  const rating = 3.5;
 
   const navigate = useNavigate();
 
@@ -48,9 +46,13 @@ const ProductCard = ({ product }) => {
         <div className="product-name">{name}</div>
         <div className="product-rating">
           {Array.from({ length: 5 }).map((_, i) => (
-            <span key={i} className={i < Math.floor(rating) ? 'star filled' : i < Math.ceil(rating) ? 'star half' : 'star'}>★</span>
+            <span key={i} className={
+              rating >= i + 1 ? 'star filled' :
+              rating > i && rating < i + 1 ? 'star half' :
+              'star'
+            }>★</span>
           ))}
-          <span className="rating-value">{rating}/5</span>
+          <span className="rating-value">{typeof rating === 'number' ? rating.toFixed(1) : 'N/A'}/5</span>
         </div>
         <div className="product-pricing">
           <span className="price">${discountedPrice}</span>

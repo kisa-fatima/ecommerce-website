@@ -18,7 +18,6 @@ import Loader from './components/Loader';
 import React from 'react';
 import AdminPanel from './pages/AdminPanel';
 import ProductPage from './pages/ProductPage';
-import ProductCatalog from './pages/ProductCatalog';
 
 function AppContent() {
   const location = useLocation();

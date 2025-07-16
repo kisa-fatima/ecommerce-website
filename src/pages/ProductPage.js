@@ -25,12 +25,23 @@ const ProductPage = () => {
   }, []);
 
   // Placeholder colors and sizes
+  const colors = ['#4B473A', '#2B3A3A', '#2B3A4B'];
   const sizes = ['Small', 'Medium', 'Large', 'X-Large'];
-  const sizeShort = ['S', 'M', 'L', 'XL'];
 
   if (!product) {
     return <div style={{ padding: 40 }}>Product not found. <button onClick={() => navigate(-1)}>Go Back</button></div>;
   }
+
+  // Build breadcrumbs from category array
+  const categoryArr = Array.isArray(product.category) ? product.category : [product.category || 'Category'];
+  const breadcrumbPaths = [
+    { name: 'Home', link: '/' },
+    ...categoryArr.map((cat, idx) => ({
+      name: typeof cat === 'string' ? cat.charAt(0).toUpperCase() + cat.slice(1) : 'Category',
+      link: '/' + categoryArr.slice(0, idx + 1).join('/'),
+    })),
+    { name: product.name, link: '' }
+  ];
 
   return (
     <div className="productpage-container">
@@ -50,18 +61,18 @@ const ProductPage = () => {
       </div>
       <div className="productpage-details">
         <div className="productpage-breadcrumbs">
-          <Breadcrumbs
-            paths={[
-              { name: 'Home', link: '/' },
-              { name: product.category.charAt(0).toUpperCase() + product.category.slice(1), link: `/${product.category}` },
-              { name: product.name, link: '' }
-            ]}
-          />
+          <Breadcrumbs paths={breadcrumbPaths} />
         </div>
         <h1 className="productpage-title">{product.name}</h1>
         <div className="productpage-rating">
-          <span className="stars">{'★'.repeat(4)}<span className="half">★</span></span>
-          <span className="rating-value">4.5/5</span>
+          <span className="stars">
+            {Array.from({ length: 5 }).map((_, i) => {
+              if (product.rating >= i + 1) return <span key={i}>★</span>;
+              if (product.rating > i && product.rating < i + 1) return <span key={i} className="half">★</span>;
+              return <span key={i} style={{ color: '#ddd' }}>★</span>;
+            })}
+          </span>
+          <span className="rating-value">{typeof product.rating === 'number' ? product.rating.toFixed(1) : 'N/A'}/5</span>
         </div>
         <div className="productpage-pricing">
           <span className="price">${product.price}</span>
@@ -76,7 +87,7 @@ const ProductPage = () => {
         <div className="productpage-section">
           <div className="section-label">Select Colors</div>
           <div className="color-options">
-            {['#4B473A', '#2B3A3A', '#2B3A4B'].map((color, idx) => (
+            {colors.map((color, idx) => (
               <span
                 key={color}
                 className={`color-dot${selectedColor === idx ? ' selected' : ''}`}
@@ -89,7 +100,7 @@ const ProductPage = () => {
         <div className="productpage-section">
           <div className="section-label">Choose Size</div>
           <div className="size-options">
-            {(mobile ? sizeShort : sizes).map((size, idx) => (
+            {sizes.map((size, idx) => (
               <span
                 key={size}
                 className={`size-btn${selectedSize === sizes[idx] ? ' selected' : ''}`}
