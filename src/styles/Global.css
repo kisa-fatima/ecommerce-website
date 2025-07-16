@@ -1004,3 +1004,21 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0 2px #e0e0e0 !important;
 }
 
+/* Admin Sidebar: Make menu item hover grey */
+.admin-sidebar-sticky .ant-menu-item:hover, 
+.admin-sidebar-sticky .ant-menu-item-active, 
+.admin-sidebar-sticky .ant-menu-item:active, 
+.admin-sidebar-sticky .ant-menu-item:focus {
+  background-color: #f0f0f0 !important;
+  color: #222 !important;
+}
+
+/* Admin Sidebar: Prevent hover color change on selected item */
+.admin-sidebar-sticky .ant-menu-item-selected,
+.admin-sidebar-sticky .ant-menu-item-selected:hover,
+.admin-sidebar-sticky .ant-menu-item-selected:active,
+.admin-sidebar-sticky .ant-menu-item-selected:focus {
+  background-color: #111 !important;
+  color: #fff !important;
+}
+
