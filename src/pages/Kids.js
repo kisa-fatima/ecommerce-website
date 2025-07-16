@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import PageBanner from '../components/PageBanner';
 import kidsImg from '../assets/images/kids.jpg';
 import TypeSelection from '../components/TypeSelection';
-import { useEffect, useState } from 'react';
 import { getAllProducts, getAllCategoriesFlat } from '../services/databaseFunctions';
 import ProductCard from '../components/ProductCard';
 import { useLocation } from 'react-router-dom';

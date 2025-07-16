@@ -1004,11 +1004,6 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0 2px #e0e0e0 !important;
 }
 
-<<<<<<< HEAD
-input, textarea, .ant-input, .ant-input-number-input {
-  color: #222 !important;
-  background: #fff;
-=======
 /* Admin Sidebar: Make menu item hover grey */
 .admin-sidebar-sticky .ant-menu-item:hover, 
 .admin-sidebar-sticky .ant-menu-item-active, 
@@ -1025,6 +1020,5 @@ input, textarea, .ant-input, .ant-input-number-input {
 .admin-sidebar-sticky .ant-menu-item-selected:focus {
   background-color: #111 !important;
   color: #fff !important;
->>>>>>> b406311c08d6598e3ca07fbaef8ab91e977335c9
 }
 
