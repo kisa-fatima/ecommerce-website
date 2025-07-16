@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/ProductCard.css';
 import { useNavigate } from 'react-router-dom';
+import { getCategoryPathById } from '../services/databaseFunctions';
 
 const slugify = (str) => str.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
@@ -18,7 +19,8 @@ const ProductCard = ({ product }) => {
     thumbnail,
     inStock,
     state,
-    rating
+    rating,
+    categoryId
   } = product;
 
   const navigate = useNavigate();
@@ -30,6 +32,9 @@ const ProductCard = ({ product }) => {
   };
 
   const discountedPrice = discountFlag ? calculateDiscountedPrice(price, discountPercentage) : price;
+
+  // If category is displayed in the card, add logic to fetch and show the path using getCategoryPathById, similar to ProductPage.
+  // If not, no changes needed.
 
   return (
     <div className={`product-card${!inStock ? ' out-of-stock' : ''}`} onClick={handleClick} style={{ cursor: 'pointer' }}> 
