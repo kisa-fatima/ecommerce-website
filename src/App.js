@@ -18,6 +18,7 @@ import Loader from './components/Loader';
 import React from 'react';
 import AdminPanel from './pages/AdminPanel';
 import ProductPage from './pages/ProductPage';
+import { updateAllProductsCategoryNames } from './services/databaseFunctions';
 
 function AppContent() {
   const location = useLocation();
@@ -47,6 +48,10 @@ function AppContent() {
 
 function App() {
   const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    // Removed temporary updateAllProductsCategoryNames useEffect
+  }, []);
 
   React.useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1600);

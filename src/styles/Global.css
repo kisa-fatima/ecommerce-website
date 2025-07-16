@@ -1004,3 +1004,8 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0 2px #e0e0e0 !important;
 }
 
+input, textarea, .ant-input, .ant-input-number-input {
+  color: #222 !important;
+  background: #fff;
+}
+

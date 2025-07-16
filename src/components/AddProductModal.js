@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, Select, Upload, Button, InputNumber, Checkbox, Row, Col } from 'antd';
+import { Modal, Form, Input, Select, Upload, Button, InputNumber, Checkbox, Row, Col, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
 import { getAllCategoriesFlat } from '../services/databaseFunctions';
@@ -47,12 +47,20 @@ const AddProductModal = ({ visible, onCancel, onAdd }) => {
   };
 
   const handleOk = () => {
+    // Check for valid image files
+    if (!thumbnailList[0] || !thumbnailList[0].originFileObj || !image1List[0] || !image1List[0].originFileObj || !image2List[0] || !image2List[0].originFileObj) {
+      message.error('Please upload all three images (thumbnail, image 1, image 2) before adding the product.');
+      return;
+    }
     form.validateFields().then(values => {
-      // Determine the selected category ID (grandchild > child > root)
-      let categoryId = values.grandchildCategory || values.childCategory || values.rootCategory;
+      let categoryId = values.rootCategory;
+      let typeId = values.childCategory ? values.childCategory : undefined;
+      let sectionId = values.grandchildCategory ? values.grandchildCategory : undefined;
       onAdd({
         ...values,
         category: categoryId,
+        ...(typeId && { type: typeId }),
+        ...(sectionId && { section: sectionId }),
         discountFlag,
         thumbnail: thumbnailList[0],
         image1: image1List[0],

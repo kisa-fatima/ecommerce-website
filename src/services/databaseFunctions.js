@@ -1,5 +1,5 @@
 import db from '../firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 // Retrieve all products from the 'products' collection
 export async function getAllProducts() {
@@ -59,4 +59,30 @@ export async function getAllCategoriesFlat() {
   const categoriesCol = collection(db, 'categories');
   const categorySnapshot = await getDocs(categoriesCol);
   return categorySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+// Script: Update all products to have categoryName, typeName, sectionName fields
+export async function updateAllProductsCategoryNames() {
+  const productsCol = collection(db, 'products');
+  const productSnapshot = await getDocs(productsCol);
+  const products = productSnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+  for (const product of products) {
+    let categoryName = '', typeName = '', sectionName = '';
+    if (product.category) {
+      const arr = await getCategoryPathById(product.category);
+      categoryName = arr[arr.length - 1] || '';
+    }
+    if (product.type) {
+      const arr = await getCategoryPathById(product.type);
+      typeName = arr[arr.length - 1] || '';
+    }
+    if (product.section) {
+      const arr = await getCategoryPathById(product.section);
+      sectionName = arr[arr.length - 1] || '';
+    }
+    const docRef = doc(db, 'products', product.id);
+    await updateDoc(docRef, { categoryName, typeName, sectionName });
+    console.log(`Updated product ${product.id}:`, { categoryName, typeName, sectionName });
+  }
+  alert('All products updated with category/type/section names!');
 }
