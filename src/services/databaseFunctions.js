@@ -1,5 +1,5 @@
 import db from '../firebase';
-import { collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, addDoc, deleteDoc } from 'firebase/firestore';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -250,4 +250,10 @@ export async function deleteCategoryFromDatabase(categoryId) {
     console.error('Error deleting category:', err);
     throw err;
   }
+}
+
+// Delete a product by ID
+export async function deleteProductById(productId) {
+  const docRef = doc(db, 'products', productId);
+  await deleteDoc(docRef);
 }
