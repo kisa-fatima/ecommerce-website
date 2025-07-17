@@ -3,7 +3,8 @@ import { Table, Button, Space } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import '../styles/AdminCategories.css';
 import { getCategoryHierarchy } from '../services/databaseFunctions';
-import { Modal, Input, Form, message } from 'antd';
+import { Modal, Input, Form, message, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const columns = [
   {
@@ -112,7 +113,7 @@ const AdminCategories = () => {
           defaultExpandAllRows: true,
         }}
         className="admin-categories-table"
-        loading={loading}
+        loading={{ spinning: loading, indicator: <Spin indicator={<LoadingOutlined style={{ fontSize: 32, color: '#111' }} spin />} /> }}
       />
       <Modal
         title={addParentId ? 'Add Subcategory' : 'Add Root Category'}

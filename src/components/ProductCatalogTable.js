@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Tag, Tooltip, Button, Modal, Descriptions, Image, message } from 'antd';
+import { Table, Tag, Tooltip, Button, Modal, Descriptions, Image, message, Spin } from 'antd';
 import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import AddProductModal from './AddProductModal';
 import { getCategoryPathById, getAllProducts, handleAddProduct, handleUpdateProduct } from '../services/databaseFunctions';
@@ -7,6 +7,7 @@ import { storage } from '../firebase';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import db from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const CatalogStatus = ({ status }) => {
   let color = 'green';
@@ -148,12 +149,14 @@ const ProductCatalogTable = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [categoryPaths, setCategoryPaths] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const handleAdd = async (product) => {
     console.log('Product received from AddProductModal:', product);
     setModalOpen(false);
     message.loading({ content: 'Adding product...', key: 'addProduct' });
     try {
+      setLoading(true);
       await handleAddProduct(product);
       message.success({ content: 'Product added successfully!', key: 'addProduct', duration: 2 });
     } catch (err) {
@@ -196,6 +199,7 @@ const ProductCatalogTable = () => {
       };
     }));
     setData(dataWithHierarchy);
+    setLoading(false);
   };
 
   const handleEdit = (product) => {
@@ -207,6 +211,7 @@ const ProductCatalogTable = () => {
     setEditModalOpen(false);
     message.loading({ content: 'Updating product...', key: 'updateProduct' });
     try {
+      setLoading(true);
       await handleUpdateProduct(productToEdit.key || productToEdit.id, updatedProduct, productToEdit);
       message.success({ content: 'Product updated successfully!', key: 'updateProduct', duration: 2 });
     } catch (err) {
@@ -249,6 +254,7 @@ const ProductCatalogTable = () => {
       };
     }));
     setData(dataWithHierarchy);
+    setLoading(false);
   };
 
   const handleView = (product) => {
@@ -263,6 +269,7 @@ const ProductCatalogTable = () => {
   // Fetch products from Firestore on mount and resolve category hierarchy
   React.useEffect(() => {
     async function fetchProducts() {
+      setLoading(true);
       const products = await getAllProducts();
       // For each product, resolve category path (category > style > type)
       const dataWithHierarchy = await Promise.all(products.map(async (product) => {
@@ -299,6 +306,7 @@ const ProductCatalogTable = () => {
         };
       }));
       setData(dataWithHierarchy);
+      setLoading(false);
     }
     fetchProducts();
   }, []);
@@ -321,6 +329,7 @@ const ProductCatalogTable = () => {
         pagination={false}
         bordered
         style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}
+        loading={{ spinning: loading, indicator: <Spin indicator={<LoadingOutlined style={{ fontSize: 32, color: '#111' }} spin />} /> }}
       />
       <AddProductModal visible={modalOpen} onCancel={() => setModalOpen(false)} onAdd={handleAdd} />
       <AddProductModal visible={editModalOpen} onCancel={() => setEditModalOpen(false)} onAdd={handleUpdate} product={productToEdit} isEditMode />
