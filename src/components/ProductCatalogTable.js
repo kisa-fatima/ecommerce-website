@@ -109,6 +109,11 @@ const columns = (onView, onEdit, onDelete) => [
     sorter: (a, b) => (a.typeName || '').localeCompare(b.typeName || ''),
   },
   {
+    title: 'Quantity',
+    dataIndex: 'quantity',
+    sorter: (a, b) => a.quantity - b.quantity,
+  },
+  {
     title: 'Ordered Items',
     dataIndex: 'ordered',
     sorter: (a, b) => a.ordered - b.ordered,
@@ -158,9 +163,11 @@ const ProductCatalogTable = () => {
     // Refetch products after add
     const products = await getAllProducts();
     const dataWithHierarchy = await Promise.all(products.map(async (product) => {
+      // Always use categoryID (deepest) if present, otherwise fallback to category
+      const catId = product.categoryID || product.category;
       let categoryName = '', styleName = '', typeName = '';
-      if (product.category) {
-        const pathArr = await getCategoryPathById(product.category);
+      if (catId) {
+        const pathArr = await getCategoryPathById(catId);
         categoryName = pathArr[0] || '';
         styleName = pathArr[1] || '';
         typeName = pathArr[2] || '';
@@ -209,9 +216,11 @@ const ProductCatalogTable = () => {
     // Refetch products after update
     const products = await getAllProducts();
     const dataWithHierarchy = await Promise.all(products.map(async (product) => {
+      // Always use categoryID (deepest) if present, otherwise fallback to category
+      const catId = product.categoryID || product.category;
       let categoryName = '', styleName = '', typeName = '';
-      if (product.category) {
-        const pathArr = await getCategoryPathById(product.category);
+      if (catId) {
+        const pathArr = await getCategoryPathById(catId);
         categoryName = pathArr[0] || '';
         styleName = pathArr[1] || '';
         typeName = pathArr[2] || '';
@@ -257,9 +266,11 @@ const ProductCatalogTable = () => {
       const products = await getAllProducts();
       // For each product, resolve category path (category > style > type)
       const dataWithHierarchy = await Promise.all(products.map(async (product) => {
+        // Always use categoryID (deepest) if present, otherwise fallback to category
+        const catId = product.categoryID || product.category;
         let categoryName = '', styleName = '', typeName = '';
-        if (product.category) {
-          const pathArr = await getCategoryPathById(product.category);
+        if (catId) {
+          const pathArr = await getCategoryPathById(catId);
           categoryName = pathArr[0] || '';
           styleName = pathArr[1] || '';
           typeName = pathArr[2] || '';
