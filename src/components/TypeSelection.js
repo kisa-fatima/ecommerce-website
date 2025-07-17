@@ -90,7 +90,7 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
           className="type-selection-btn"
           onClick={() => handleStyleSelect('all')}
         >
-          All
+          ALL
         </Button>
         {subcategories.map(subcat => (
           <Button
@@ -99,25 +99,25 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
             className="type-selection-btn"
             onClick={() => handleStyleSelect(subcat.id)}
           >
-            {subcat.name}
+            {subcat.name.toUpperCase()}
           </Button>
         ))}
       </div>
       {typeCategories.length > 0 && (
-        <div style={{ position: 'absolute', right: 20, minWidth: 180 }}>
+        <div style={{ position: 'absolute', right: 20, minWidth: 100 }}>
           <Select
             value={selectedTypeFromUrl}
             placeholder="Select type"
             onChange={handleTypeSelect}
-            style={{ width: '100%' }}
+            style={{ width: 100 }}
           >
-            <Option value="all">All</Option>
+            <Option value="all">ALL</Option>
             {selectedStyle === 'all'
               ? typeCategories.map(typecat => (
-                  <Option key={typecat.name} value={typecat.name}>{typecat.name}</Option>
+                  <Option key={typecat.name} value={typecat.name}>{typecat.name.toUpperCase()}</Option>
                 ))
               : typeCategories.map(typecat => (
-                  <Option key={typecat.id} value={typecat.id}>{typecat.name}</Option>
+                  <Option key={typecat.id} value={typecat.id}>{typecat.name.toUpperCase()}</Option>
                 ))}
           </Select>
         </div>
