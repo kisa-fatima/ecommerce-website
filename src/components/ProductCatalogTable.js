@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Table, Tag, Tooltip, Button, Modal, Descriptions, Image, message, Spin } from 'antd';
 import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import AddProductModal from './AddProductModal';
-import { getCategoryPathById, getAllProducts, handleAddProduct, handleUpdateProduct } from '../services/databaseFunctions';
+import { getCategoryPathById, getAllProducts, handleAddProduct, handleUpdateProduct, deleteProductById } from '../services/databaseFunctions';
 import { storage } from '../firebase';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import db from '../firebase';
@@ -192,7 +192,9 @@ const ProductCatalogTable = () => {
         ordered: product.ordered || 0,
         revenue: product.revenue || 0,
         catalog: product.catalog || 'Active',
-        stock: product.inStock ? 'In stock' : 'Out of stock',
+        stock: product.inStock === true ? 'In stock' : 'Out of stock',
+        inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
+        state: typeof product.state === 'boolean' ? product.state : false,
         thumbnail: product.thumbnail,
         image1: product.image1,
         image2: product.image2,
@@ -203,7 +205,9 @@ const ProductCatalogTable = () => {
   };
 
   const handleEdit = (product) => {
-    setProductToEdit(product);
+    // Always use the latest product data from the table state
+    const latestProduct = data.find(row => row.key === product.key || row.key === product.id) || product;
+    setProductToEdit(latestProduct);
     setEditModalOpen(true);
   };
 
@@ -247,7 +251,9 @@ const ProductCatalogTable = () => {
         ordered: product.ordered || 0,
         revenue: product.revenue || 0,
         catalog: product.catalog || 'Active',
-        stock: product.inStock ? 'In stock' : 'Out of stock',
+        stock: product.inStock === true ? 'In stock' : 'Out of stock',
+        inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
+        state: typeof product.state === 'boolean' ? product.state : false,
         thumbnail: product.thumbnail,
         image1: product.image1,
         image2: product.image2,
@@ -264,8 +270,52 @@ const ProductCatalogTable = () => {
     setViewModalOpen(true);
   };
 
-  const handleDelete = (product) => {
-    setData(data.filter((item) => item.key !== product.key));
+  const handleDelete = async (product) => {
+    try {
+      await deleteProductById(product.key || product.id);
+      message.success('Product deleted successfully!');
+      // Refetch products after delete
+      setLoading(true);
+      const products = await getAllProducts();
+      const dataWithHierarchy = await Promise.all(products.map(async (product) => {
+        const catId = product.categoryID || product.category;
+        let categoryName = '', styleName = '', typeName = '';
+        if (catId) {
+          const pathArr = await getCategoryPathById(catId);
+          categoryName = pathArr[0] || '';
+          styleName = pathArr[1] || '';
+          typeName = pathArr[2] || '';
+        }
+        return {
+          key: product.id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          quantity: product.quantity,
+          discountFlag: product.discountFlag,
+          discountPercentage: product.discountPercentage,
+          category: product.category,
+          categoryName,
+          styleName,
+          typeName,
+          type: product.type,
+          section: product.section,
+          ordered: product.ordered || 0,
+          revenue: product.revenue || 0,
+          catalog: product.catalog || 'Active',
+          stock: product.inStock === true ? 'In stock' : 'Out of stock',
+          inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
+          state: typeof product.state === 'boolean' ? product.state : false,
+          thumbnail: product.thumbnail,
+          image1: product.image1,
+          image2: product.image2,
+        };
+      }));
+      setData(dataWithHierarchy);
+      setLoading(false);
+    } catch (err) {
+      message.error('Failed to delete product. Please try again.');
+    }
   };
 
   // Fetch products from Firestore on mount and resolve category hierarchy
@@ -301,7 +351,9 @@ const ProductCatalogTable = () => {
           ordered: product.ordered || 0,
           revenue: product.revenue || 0,
           catalog: product.catalog || 'Active',
-          stock: product.inStock ? 'In stock' : 'Out of stock',
+          stock: product.inStock === true ? 'In stock' : 'Out of stock',
+          inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
+          state: typeof product.state === 'boolean' ? product.state : false,
           thumbnail: product.thumbnail,
           image1: product.image1,
           image2: product.image2,
