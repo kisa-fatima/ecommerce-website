@@ -105,6 +105,7 @@ export async function handleAddProduct(product) {
   // 3. Add product to Firestore with all required fields
   const productData = {
     category: product.category,
+    categoryID: product.categoryId, // Save the deepest category ID as categoryID
     categoryName,
     styleName,
     typeName,
