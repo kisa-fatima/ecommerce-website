@@ -21,30 +21,30 @@ const StockStatus = ({ status }) => (
 );
 
 const ProductViewModal = ({ visible, onClose, product }) => {
-  const [categoryPath, setCategoryPath] = React.useState('');
+  const [categoryName, setCategoryName] = React.useState('');
+  const [styleName, setStyleName] = React.useState('');
   const [typeName, setTypeName] = React.useState('');
-  const [sectionName, setSectionName] = React.useState('');
   React.useEffect(() => {
     async function fetchPath() {
-      if (product?.category) {
-        const pathArr = await getCategoryPathById(product.category);
-        setCategoryPath(pathArr.join(' > '));
-      } else {
-        setCategoryPath('');
-      }
-      // Resolve type name
-      if (product?.type) {
-        const typeArr = await getCategoryPathById(product.type);
-        setTypeName(typeArr[typeArr.length - 1] || '');
-      } else {
-        setTypeName('');
-      }
-      // Resolve section name
-      if (product?.section) {
-        const sectionArr = await getCategoryPathById(product.section);
-        setSectionName(sectionArr[sectionArr.length - 1] || '');
-      } else {
-        setSectionName('');
+      if (product) {
+        // Use values from product if present, otherwise fetch
+        if (product.categoryName || product.styleName || product.typeName) {
+          setCategoryName(product.categoryName || '');
+          setStyleName(product.styleName || '');
+          setTypeName(product.typeName || '');
+        } else {
+          const catId = product.categoryID || product.category;
+          if (catId) {
+            const pathArr = await getCategoryPathById(catId);
+            setCategoryName(pathArr[0] || '');
+            setStyleName(pathArr[1] || '');
+            setTypeName(pathArr[2] || '');
+          } else {
+            setCategoryName('');
+            setStyleName('');
+            setTypeName('');
+          }
+        }
       }
     }
     if (visible && product) fetchPath();
@@ -57,9 +57,9 @@ const ProductViewModal = ({ visible, onClose, product }) => {
           <Descriptions.Item label="Description">{product.description}</Descriptions.Item>
           <Descriptions.Item label="Price">{product.price}</Descriptions.Item>
           <Descriptions.Item label="Quantity">{product.quantity}</Descriptions.Item>
-          <Descriptions.Item label="Category">{categoryPath}</Descriptions.Item>
+          <Descriptions.Item label="Category">{categoryName}</Descriptions.Item>
+          <Descriptions.Item label="Style">{styleName}</Descriptions.Item>
           <Descriptions.Item label="Type">{typeName}</Descriptions.Item>
-          <Descriptions.Item label="Section">{sectionName}</Descriptions.Item>
           <Descriptions.Item label="Discount?">{product.discountFlag ? 'Yes' : 'No'}</Descriptions.Item>
           {product.discountFlag && (
             <Descriptions.Item label="Discount Percentage">{product.discountPercentage}</Descriptions.Item>
@@ -258,7 +258,9 @@ const ProductCatalogTable = () => {
   };
 
   const handleView = (product) => {
-    setSelectedProduct(product);
+    // Find the full row object from data (which has categoryName, styleName, typeName)
+    const fullProduct = data.find(row => row.key === product.key || row.key === product.id) || product;
+    setSelectedProduct(fullProduct);
     setViewModalOpen(true);
   };
 
@@ -322,15 +324,15 @@ const ProductCatalogTable = () => {
           Add
         </Button>
       </div>
-      <Table
+    <Table
         columns={columns(handleView, handleEdit, handleDelete)}
-        dataSource={data}
-        rowSelection={{ type: 'checkbox' }}
-        pagination={false}
-        bordered
-        style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}
+      dataSource={data}
+      rowSelection={{ type: 'checkbox' }}
+      pagination={false}
+      bordered
+      style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}
         loading={{ spinning: loading, indicator: <Spin indicator={<LoadingOutlined style={{ fontSize: 32, color: '#111' }} spin />} /> }}
-      />
+    />
       <AddProductModal visible={modalOpen} onCancel={() => setModalOpen(false)} onAdd={handleAdd} />
       <AddProductModal visible={editModalOpen} onCancel={() => setEditModalOpen(false)} onAdd={handleUpdate} product={productToEdit} isEditMode />
       <ProductViewModal visible={viewModalOpen} onClose={() => setViewModalOpen(false)} product={selectedProduct} />
@@ -338,4 +340,4 @@ const ProductCatalogTable = () => {
   );
 };
 
-export default ProductCatalogTable;
+export default ProductCatalogTable; 
