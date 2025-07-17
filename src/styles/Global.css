@@ -1022,3 +1022,26 @@ input:-webkit-autofill:active {
   color: #fff !important;
 }
 
+@media (max-width: 600px) {
+  /* Universal 2-column grid for product card containers */
+  .product-card-grid,
+  .new-arrivals-row,
+  .top-selling-row,
+  .category-selector-products,
+  .all-products-row,
+  .product-list-row,
+  .products-flex-wrap,
+  .products-row,
+  .products-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    justify-content: center !important;
+    align-items: start !important;
+  }
+  .products-row {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+

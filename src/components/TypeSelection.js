@@ -6,6 +6,17 @@ import '../styles/TypeSelection.css';
 
 const { Option } = Select;
 
+// Add a hook to detect mobile
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 600);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  return isMobile;
+}
+
 const TypeSelection = ({ rootCategoryName, onSelect }) => {
   const [subcategories, setSubcategories] = useState([]);
   const [rootCategory, setRootCategory] = useState(null);
@@ -14,6 +25,7 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
   const [selectedType, setSelectedType] = useState('all');
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // Parse selected style and type from URL
   const params = new URLSearchParams(location.search);
@@ -84,7 +96,7 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
 
   return (
     <div className="type-selection-row" style={{ position: 'relative' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', flexWrap: isMobile ? 'wrap' : undefined }}>
         <Button
           type={selectedStyle === 'all' ? 'primary' : 'default'}
           className="type-selection-btn"
@@ -104,23 +116,43 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
         ))}
       </div>
       {typeCategories.length > 0 && (
-        <div style={{ position: 'absolute', right: 20, minWidth: 100 }}>
-          <Select
-            value={selectedTypeFromUrl}
-            placeholder="Select type"
-            onChange={handleTypeSelect}
-            style={{ width: 100 }}
-          >
-            <Option value="all">ALL</Option>
-            {selectedStyle === 'all'
-              ? typeCategories.map(typecat => (
-                  <Option key={typecat.name} value={typecat.name}>{typecat.name.toUpperCase()}</Option>
-                ))
-              : typeCategories.map(typecat => (
-                  <Option key={typecat.id} value={typecat.id}>{typecat.name.toUpperCase()}</Option>
-                ))}
-          </Select>
-        </div>
+        isMobile ? (
+          <div style={{ width: '100%', marginTop: 8, display: 'flex', justifyContent: 'flex-end', marginRight: 10 }}>
+            <Select
+              value={selectedTypeFromUrl}
+              placeholder="Select type"
+              onChange={handleTypeSelect}
+              style={{ width: 80 }}
+            >
+              <Option value="all">ALL</Option>
+              {selectedStyle === 'all'
+                ? typeCategories.map(typecat => (
+                    <Option key={typecat.name} value={typecat.name}>{typecat.name.toUpperCase()}</Option>
+                  ))
+                : typeCategories.map(typecat => (
+                    <Option key={typecat.id} value={typecat.id}>{typecat.name.toUpperCase()}</Option>
+                  ))}
+            </Select>
+          </div>
+        ) : (
+          <div style={{ position: 'absolute', right: 20, minWidth: 100 }}>
+            <Select
+              value={selectedTypeFromUrl}
+              placeholder="Select type"
+              onChange={handleTypeSelect}
+              style={{ width: 100 }}
+            >
+              <Option value="all">ALL</Option>
+              {selectedStyle === 'all'
+                ? typeCategories.map(typecat => (
+                    <Option key={typecat.name} value={typecat.name}>{typecat.name.toUpperCase()}</Option>
+                  ))
+                : typeCategories.map(typecat => (
+                    <Option key={typecat.id} value={typecat.id}>{typecat.name.toUpperCase()}</Option>
+                  ))}
+            </Select>
+          </div>
+        )
       )}
     </div>
   );

@@ -69,7 +69,7 @@ const Women = () => {
         description="Discover our curated collection of women's fashion designed to empower every style. From breezy summer dresses to bold leather jackets, explore outfits made for work, weekends, and everything in between. Whether you're dressing up or keeping it casual, find the perfect blend of comfort, confidence, and charm."
       />
       <TypeSelection rootCategoryName="Women" />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
+      <div className="products-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
         {filtered.map(product => <ProductCard key={product.id} product={product} />)}
       </div>
     </div>

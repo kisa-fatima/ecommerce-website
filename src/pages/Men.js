@@ -69,7 +69,7 @@ const Men = () => {
         description="Step up your wardrobe with our curated men’s collection — from sharp shirts and classic denim to laid-back tees and cozy essentials. Whether it’s work, weekends, or workouts, find high-quality pieces designed for comfort, durability, and timeless style."
       />
       <TypeSelection rootCategoryName="Men" />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
+      <div className="products-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
         {filtered.map(product => <ProductCard key={product.id} product={product} />)}
       </div>
     </div>

@@ -36,3 +36,42 @@
   color: #fff !important;
   border: 1.5px solid #111 !important;
 }
+
+@media (max-width: 600px) {
+  .type-selection-row {
+    flex-direction: column;
+    margin: 24px 0 8px 0;
+    gap: 8px;
+  }
+  .type-selection-btn {
+    font-size: 0.85rem;
+    padding: 0 16px;
+    height: 34px;
+    margin-right: 10px;
+    margin-bottom: 6px;
+  }
+  .type-selection-btn:last-child {
+    margin-right: 0;
+  }
+  .type-selection-row > div {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .ant-select {
+    width: 80px !important;
+  }
+  .ant-select-selector {
+    font-size: 0.85rem !important;
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 0 6px !important;
+  }
+  .ant-select-selection-item,
+  .ant-select-selection-placeholder {
+    font-size: 0.85rem !important;
+  }
+  .ant-select-dropdown .ant-select-item-option-content {
+    font-size: 0.85rem !important;
+  }
+}

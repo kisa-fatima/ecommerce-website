@@ -62,6 +62,7 @@ const CategorySelectorSection = ({ styleName }) => {
         <div className="category-selector-count" style={{ margin: '0 auto', textAlign: 'center', width: '100%' }}>{displayedCount} PRODUCTS</div>
         {typeCategories.length > 0 && (
           <Select
+            className="category-type-dropdown"
             value={selectedType}
             onChange={setSelectedType}
             style={{ width: 100, position: 'absolute', right: 20, top: 0 }}
@@ -75,7 +76,7 @@ const CategorySelectorSection = ({ styleName }) => {
         )}
       </div>
       {loading ? <div style={{ marginTop: 24 }}>Loading...</div> : null}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
+      <div className="category-selector-products" style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
         {displayedProducts.map(product => <ProductCard key={product.id} product={product} />)}
       </div>
     </div>

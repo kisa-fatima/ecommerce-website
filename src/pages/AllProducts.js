@@ -36,7 +36,7 @@ const AllProducts = () => {
         ) : products.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 40 }}>No products found.</div>
         ) : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center' }}>
+          <div className="all-products-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center' }}>
             {products.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}

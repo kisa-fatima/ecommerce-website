@@ -69,7 +69,7 @@ const Kids = () => {
         description="Discover our curated collection of kids' fashion for every adventure. From playful tees to cozy hoodies, find outfits that keep up with their energy and imagination."
       />
       <TypeSelection rootCategoryName="Kids" />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
+      <div className="products-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
         {filtered.map(product => <ProductCard key={product.id} product={product} />)}
       </div>
     </div>
