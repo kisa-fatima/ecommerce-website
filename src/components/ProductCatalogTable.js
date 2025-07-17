@@ -20,6 +20,10 @@ const StockStatus = ({ status }) => (
   <span style={{ color: status === 'In stock' ? '#52c41a' : '#888' }}>{status}</span>
 );
 
+const StateTag = ({ state }) => (
+  <Tag color={state ? 'green' : 'red'}>{state ? 'Visible' : 'Hidden'}</Tag>
+);
+
 const ProductViewModal = ({ visible, onClose, product }) => {
   const [categoryName, setCategoryName] = React.useState('');
   const [styleName, setStyleName] = React.useState('');
@@ -95,6 +99,12 @@ const columns = (onView, onEdit, onDelete) => [
     render: (text) => <b>{text}</b>,
   },
   {
+    title: 'Price',
+    dataIndex: 'price',
+    sorter: (a, b) => a.price - b.price,
+    render: (price) => `$${price}`,
+  },
+  {
     title: 'Category',
     dataIndex: 'categoryName',
     sorter: (a, b) => (a.categoryName || '').localeCompare(b.categoryName || ''),
@@ -110,24 +120,27 @@ const columns = (onView, onEdit, onDelete) => [
     sorter: (a, b) => (a.typeName || '').localeCompare(b.typeName || ''),
   },
   {
-    title: 'Quantity',
+    title: 'Qty',
     dataIndex: 'quantity',
     sorter: (a, b) => a.quantity - b.quantity,
   },
   {
-    title: 'Ordered Items',
+    title: 'Orders',
     dataIndex: 'ordered',
     sorter: (a, b) => a.ordered - b.ordered,
+    width: 70,
   },
   {
-    title: 'Revenue',
+    title: <span>Revenue<br/></span>,
     dataIndex: 'revenue',
     sorter: (a, b) => a.revenue - b.revenue,
+    width: 80,
   },
   {
-    title: 'Catalog...',
-    dataIndex: 'catalog',
-    render: (status) => <CatalogStatus status={status} />,
+    title: 'State',
+    dataIndex: 'state',
+    render: (state) => <StateTag state={state} />, 
+    width: 80,
   },
   {
     title: 'Stock status',

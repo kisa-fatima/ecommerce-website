@@ -57,7 +57,7 @@ const ProductCard = ({ product }) => {
               'star'
             }>★</span>
           ))}
-          <span className="rating-value">{typeof rating === 'number' ? rating.toFixed(1) : 'N/A'}/5</span>
+          <span className="rating-value">{(typeof rating === 'number' && rating !== null && rating !== undefined) ? rating.toFixed(1) : (rating ? Number(rating).toFixed(1) : 'N/A')}/5</span>
         </div>
         <div className="product-pricing">
           <span className="price">${discountedPrice}</span>
