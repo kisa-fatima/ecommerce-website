@@ -378,9 +378,12 @@ const ProductCatalogTable = () => {
     fetchProducts();
   }, []);
 
+  // Responsive check for mobile
+  const isMobile = window.innerWidth <= 600;
+
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: isMobile ? 'flex-start' : 'flex-end', marginBottom: 16 }}>
         <Button
           icon={<PlusOutlined />} 
           onClick={() => setModalOpen(true)}
@@ -395,7 +398,7 @@ const ProductCatalogTable = () => {
       rowSelection={{ type: 'checkbox' }}
       pagination={false}
       bordered
-      style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}
+      style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', minWidth: 700 }}
         loading={{ spinning: loading, indicator: <Spin indicator={<LoadingOutlined style={{ fontSize: 32, color: '#111' }} spin />} /> }}
     />
       <AddProductModal visible={modalOpen} onCancel={() => setModalOpen(false)} onAdd={handleAdd} />

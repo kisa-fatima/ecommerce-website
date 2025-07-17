@@ -73,6 +73,10 @@
   color: #ff4d4f !important;
 }
 
+.admin-categories-table td:last-child {
+  text-align: right;
+}
+
 @media (max-width: 700px) {
   .admin-categories-container {
     padding: 16px 4vw 16px 4vw;
@@ -81,5 +85,23 @@
   }
   .admin-categories-title {
     font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-categories-table {
+    display: table;
+    width: 100% !important;
+    table-layout: fixed;
+  }
+  .admin-categories-table th,
+  .admin-categories-table td {
+    word-break: break-word;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+  .admin-categories-table th:last-child,
+  .admin-categories-table td:last-child {
+    text-align: right;
   }
 }

@@ -41,6 +41,14 @@ const AdminCategories = () => {
   const [deleteCategoryId, setDeleteCategoryId] = useState(null);
   const [deleteCategoryName, setDeleteCategoryName] = useState('');
 
+  // Responsive check for mobile (dynamic)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 600);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     async function fetchCategories() {
       setLoading(true);
@@ -167,9 +175,8 @@ const AdminCategories = () => {
   ];
 
   return (
-    <div className="admin-categories-container">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h2 className="admin-categories-title" style={{ margin: 0 }}>Catalog Management</h2>
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'flex-start' : 'flex-end', marginBottom: 16 }}>
         <Button
           type="primary"
           icon={<PlusOutlined />}
