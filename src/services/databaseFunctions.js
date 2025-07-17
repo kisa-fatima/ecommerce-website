@@ -190,3 +190,60 @@ export async function updateAllProductsCategoryNames() {
   }
   alert('All products updated with category/style/type names!');
 }
+
+/**
+ * Adds a new category to the Firestore database.
+ * @param {string} name - The name of the new category.
+ * @param {string|number|null} parentID - The parent category's ID, or 0/null for root.
+ * @returns {Promise<string>} The ID of the created Firestore document.
+ */
+export async function addCategoryToDatabase(name, parentID) {
+  try {
+    const { addDoc, collection } = await import('firebase/firestore');
+    const { default: db } = await import('../firebase');
+    const docRef = await addDoc(collection(db, 'categories'), {
+      name,
+      parentID: parentID === 0 ? null : parentID,
+      state: true,
+    });
+    return docRef.id;
+  } catch (err) {
+    console.error('Error adding category:', err);
+    throw err;
+  }
+}
+
+/**
+ * Updates the name of a category in the Firestore database.
+ * @param {string} categoryId - The ID of the category to update.
+ * @param {string} newName - The new name for the category.
+ * @returns {Promise<void>}
+ */
+export async function updateCategoryNameInDatabase(categoryId, newName) {
+  try {
+    const { doc, updateDoc } = await import('firebase/firestore');
+    const { default: db } = await import('../firebase');
+    const docRef = doc(db, 'categories', categoryId);
+    await updateDoc(docRef, { name: newName });
+  } catch (err) {
+    console.error('Error updating category name:', err);
+    throw err;
+  }
+}
+
+/**
+ * Deletes a category from the Firestore database.
+ * @param {string} categoryId - The ID of the category to delete.
+ * @returns {Promise<void>}
+ */
+export async function deleteCategoryFromDatabase(categoryId) {
+  try {
+    const { doc, deleteDoc } = await import('firebase/firestore');
+    const { default: db } = await import('../firebase');
+    const docRef = doc(db, 'categories', categoryId);
+    await deleteDoc(docRef);
+  } catch (err) {
+    console.error('Error deleting category:', err);
+    throw err;
+  }
+}
