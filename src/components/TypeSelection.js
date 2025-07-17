@@ -15,9 +15,10 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Parse selected style from URL
+  // Parse selected style and type from URL
   const params = new URLSearchParams(location.search);
   const selectedStyle = params.get('style') || 'all';
+  const selectedTypeFromUrl = params.get('type') || 'all';
 
   useEffect(() => {
     async function fetchCategories() {
@@ -51,11 +52,7 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
       } else {
         setTypeCategories(allCategories.filter(cat => cat.parentID === selectedStyle));
       }
-      setSelectedType('all');
-      // Remove type from URL
-      const params = new URLSearchParams(location.search);
-      params.delete('type');
-      navigate({ search: params.toString() }, { replace: true });
+      // Do not reset selectedType here; let it be controlled by URL
     }
   }, [selectedStyle, allCategories, rootCategory]);
 
@@ -109,7 +106,7 @@ const TypeSelection = ({ rootCategoryName, onSelect }) => {
       {typeCategories.length > 0 && (
         <div style={{ position: 'absolute', right: 20, minWidth: 180 }}>
           <Select
-            value={selectedType}
+            value={selectedTypeFromUrl}
             placeholder="Select type"
             onChange={handleTypeSelect}
             style={{ width: '100%' }}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/ProductPage.css';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { getCategoryPathById } from '../services/databaseFunctions';
+import { getCategoryPathById, getCategoryPathIdsById } from '../services/databaseFunctions';
 
 const isMobile = () => window.innerWidth <= 900;
 
@@ -11,6 +11,7 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const product = state?.product;
   const [categoryPath, setCategoryPath] = useState([]);
+  const [categoryPathIds, setCategoryPathIds] = useState([]);
 
   // Always show three images: thumbnail, image1, image2
   const galleryImages = [product?.thumbnail, product?.image1, product?.image2];
@@ -31,8 +32,11 @@ const ProductPage = () => {
       if (product?.categoryID) {
         const path = await getCategoryPathById(product.categoryID);
         setCategoryPath(path);
+        const pathIds = await getCategoryPathIdsById(product.categoryID);
+        setCategoryPathIds(pathIds);
       } else {
         setCategoryPath([]);
+        setCategoryPathIds([]);
       }
     }
     fetchCategoryPath();
@@ -46,18 +50,49 @@ const ProductPage = () => {
     return <div style={{ padding: 40 }}>Product not found. <button onClick={() => navigate(-1)}>Go Back</button></div>;
   }
 
-  // Build breadcrumbs from categoryPath
+  // Build breadcrumbs from categoryPath and categoryPathIds
   const rootCategoryLinks = {
     Women: '/women',
     Men: '/men',
     Kids: '/kids',
   };
+  const rootCategoryNames = ['Women', 'Men', 'Kids'];
   const breadcrumbPaths = [
     { name: 'Home', link: '/' },
-    ...categoryPath.map((cat, idx) => ({
-      name: cat.charAt(0).toUpperCase() + cat.slice(1),
-      link: idx === 0 && rootCategoryLinks[cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase()] ? rootCategoryLinks[cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase()] : '#',
-    })),
+    ...categoryPath.map((cat, idx) => {
+      // Home > Women > Style > Type
+      if (idx === 0 && rootCategoryLinks[cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase()]) {
+        // Root category (Women/Men/Kids)
+        return {
+          name: cat.charAt(0).toUpperCase() + cat.slice(1),
+          link: rootCategoryLinks[cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase()],
+        };
+      } else if (idx === 1 && categoryPathIds.length > 1) {
+        // Style (e.g. Casual, Gym, etc.)
+        // Link to /women?style=STYLE_ID (or men/kids)
+        const rootName = categoryPath[0].charAt(0).toUpperCase() + categoryPath[0].slice(1);
+        const rootLink = rootCategoryLinks[rootName] || '#';
+        return {
+          name: cat.charAt(0).toUpperCase() + cat.slice(1),
+          link: `${rootLink}?style=${categoryPathIds[1]}`,
+        };
+      } else if (idx === 2 && categoryPathIds.length > 2) {
+        // Type (e.g. Top, Bottom, etc.)
+        // Link to /women?style=STYLE_ID&type=TYPE_ID (or men/kids)
+        const rootName = categoryPath[0].charAt(0).toUpperCase() + categoryPath[0].slice(1);
+        const rootLink = rootCategoryLinks[rootName] || '#';
+        return {
+          name: cat.charAt(0).toUpperCase() + cat.slice(1),
+          link: `${rootLink}?style=${categoryPathIds[1]}&type=${categoryPathIds[2]}`,
+        };
+      } else {
+        // No link for deeper levels
+        return {
+          name: cat.charAt(0).toUpperCase() + cat.slice(1),
+          link: '#',
+        };
+      }
+    }),
     { name: product.name, link: '' }
   ];
 
