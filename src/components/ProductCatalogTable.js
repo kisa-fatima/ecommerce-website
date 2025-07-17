@@ -159,41 +159,37 @@ const ProductCatalogTable = () => {
       const thumbnailUrl = await uploadImage(product.thumbnail, 'product-thumbnails');
       const image1Url = await uploadImage(product.image1, 'product-images');
       const image2Url = await uploadImage(product.image2, 'product-images');
-      // 2. Resolve category/type/section names
-      let categoryName = '', typeName = '', sectionName = '';
+      // 2. Resolve category/style/type names
+      let categoryName = '', styleName = '', typeName = '';
       if (product.category) {
         const arr = await getCategoryPathById(product.category);
-        categoryName = arr[arr.length - 1] || '';
+        categoryName = arr[0] || '';
+        styleName = arr[1] || '';
+        typeName = arr[2] || '';
       }
-      if (product.type) {
-        const arr = await getCategoryPathById(product.type);
-        typeName = arr[arr.length - 1] || '';
-      }
-      if (product.section) {
-        const arr = await getCategoryPathById(product.section);
-        sectionName = arr[arr.length - 1] || '';
-      }
-      // 3. Add product to Firestore with only the specified fields
+      // 3. Add product to Firestore with all required fields
       const productData = {
         category: product.category,
         categoryName,
+        styleName,
+        typeName,
         description: product.description,
         discountFlag: product.discountFlag,
-        discountPercentage: product.discountPercentage,
+        discountPercentage: product.discountPercentage !== undefined ? product.discountPercentage : null,
         image1: image1Url || '',
         image2: image2Url || '',
         inStock: product.inStock !== undefined ? product.inStock : true,
         name: product.name,
         price: product.price,
         quantity: product.quantity,
-        rating: (Math.random() * 2 + 3).toFixed(1), // random between 3.0 and 5.0
-        sectionName,
+        rating: (Math.random() * 2 + 3).toFixed(1),
         soldCount: 0,
         state: true,
         thumbnail: thumbnailUrl || '',
-        typeName,
       };
+      console.log('About to add product to Firestore:', productData);
       await addDoc(collection(db, 'products'), productData);
+      console.log('Product successfully added to Firestore');
       message.success({ content: 'Product added successfully!', key: 'addProduct', duration: 2 });
     } catch (err) {
       console.error('Error adding product:', err);
@@ -201,7 +197,6 @@ const ProductCatalogTable = () => {
     }
     // 4. Refetch products after add
     const products = await getAllProducts();
-    // For each product, resolve category path (category > style > type)
     const dataWithHierarchy = await Promise.all(products.map(async (product) => {
       let categoryName = '', styleName = '', typeName = '';
       if (product.category) {

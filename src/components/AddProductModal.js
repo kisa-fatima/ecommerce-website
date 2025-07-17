@@ -180,7 +180,7 @@ const AddProductModal = ({ visible, onCancel, onAdd, product, isEditMode }) => {
           {isEditMode ? 'Update' : 'Add'}
         </Button>
       ]}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form form={form} layout="vertical">
         <Form.Item name="name" label="Product Name" rules={[{ required: true, message: 'Please enter product name' }]}> 
