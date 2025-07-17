@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Table, Tag, Tooltip, Button, Modal, Descriptions, Image, message } from 'antd';
 import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import AddProductModal from './AddProductModal';
-import { getCategoryPathById, getAllProducts } from '../services/databaseFunctions';
+import { getCategoryPathById, getAllProducts, handleAddProduct, handleUpdateProduct } from '../services/databaseFunctions';
 import { storage } from '../firebase';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import db from '../firebase';
@@ -149,59 +149,14 @@ const ProductCatalogTable = () => {
     setModalOpen(false);
     message.loading({ content: 'Adding product...', key: 'addProduct' });
     try {
-      // 1. Upload images to Firebase Storage
-      const uploadImage = async (file, path) => {
-        if (!file || !file.originFileObj) return '';
-        const storageRef = ref(storage, `${path}/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file.originFileObj);
-        return await getDownloadURL(storageRef);
-      };
-      const thumbnailUrl = await uploadImage(product.thumbnail, 'product-thumbnails');
-      const image1Url = await uploadImage(product.image1, 'product-images');
-      const image2Url = await uploadImage(product.image2, 'product-images');
-      // 2. Resolve category/type/section names
-      let categoryName = '', typeName = '', sectionName = '';
-      if (product.category) {
-        const arr = await getCategoryPathById(product.category);
-        categoryName = arr[arr.length - 1] || '';
-      }
-      if (product.type) {
-        const arr = await getCategoryPathById(product.type);
-        typeName = arr[arr.length - 1] || '';
-      }
-      if (product.section) {
-        const arr = await getCategoryPathById(product.section);
-        sectionName = arr[arr.length - 1] || '';
-      }
-      // 3. Add product to Firestore with only the specified fields
-      const productData = {
-        category: product.category,
-        categoryName,
-        description: product.description,
-        discountFlag: product.discountFlag,
-        discountPercentage: product.discountPercentage,
-        image1: image1Url || '',
-        image2: image2Url || '',
-        inStock: product.inStock !== undefined ? product.inStock : true,
-        name: product.name,
-        price: product.price,
-        quantity: product.quantity,
-        rating: (Math.random() * 2 + 3).toFixed(1), // random between 3.0 and 5.0
-        sectionName,
-        soldCount: 0,
-        state: true,
-        thumbnail: thumbnailUrl || '',
-        typeName,
-      };
-      await addDoc(collection(db, 'products'), productData);
+      await handleAddProduct(product);
       message.success({ content: 'Product added successfully!', key: 'addProduct', duration: 2 });
     } catch (err) {
       console.error('Error adding product:', err);
       message.error({ content: 'Failed to add product. Please try again.', key: 'addProduct', duration: 3 });
     }
-    // 4. Refetch products after add
+    // Refetch products after add
     const products = await getAllProducts();
-    // For each product, resolve category path (category > style > type)
     const dataWithHierarchy = await Promise.all(products.map(async (product) => {
       let categoryName = '', styleName = '', typeName = '';
       if (product.category) {
@@ -245,47 +200,7 @@ const ProductCatalogTable = () => {
     setEditModalOpen(false);
     message.loading({ content: 'Updating product...', key: 'updateProduct' });
     try {
-      // Upload new images if changed, otherwise keep existing URLs
-      const uploadImage = async (file, path, existingUrl) => {
-        if (!file) return existingUrl || '';
-        if (file.originFileObj) {
-          const storageRef = ref(storage, `${path}/${Date.now()}_${file.name}`);
-          await uploadBytes(storageRef, file.originFileObj);
-          return await getDownloadURL(storageRef);
-        }
-        return file.url || file.thumbUrl || existingUrl || '';
-      };
-      const thumbnailUrl = await uploadImage(updatedProduct.thumbnail, 'product-thumbnails', productToEdit.thumbnail);
-      const image1Url = await uploadImage(updatedProduct.image1, 'product-images', productToEdit.image1);
-      const image2Url = await uploadImage(updatedProduct.image2, 'product-images', productToEdit.image2);
-      // Resolve category/style/type names
-      let categoryName = '', styleName = '', typeName = '';
-      if (updatedProduct.category) {
-        const arr = await getCategoryPathById(updatedProduct.category);
-        categoryName = arr[0] || '';
-        styleName = arr[1] || '';
-        typeName = arr[2] || '';
-      }
-      // Update product in Firestore
-      const docRef = doc(db, 'products', productToEdit.key || productToEdit.id);
-      await updateDoc(docRef, {
-        name: updatedProduct.name,
-        description: updatedProduct.description,
-        price: updatedProduct.price,
-        quantity: updatedProduct.quantity,
-        discountFlag: updatedProduct.discountFlag,
-        discountPercentage: updatedProduct.discountPercentage,
-        category: updatedProduct.category,
-        type: updatedProduct.type,
-        section: updatedProduct.section,
-        categoryName,
-        styleName,
-        typeName,
-        thumbnail: thumbnailUrl,
-        image1: image1Url,
-        image2: image2Url,
-        inStock: updatedProduct.inStock !== undefined ? updatedProduct.inStock : true,
-      });
+      await handleUpdateProduct(productToEdit.key || productToEdit.id, updatedProduct, productToEdit);
       message.success({ content: 'Product updated successfully!', key: 'updateProduct', duration: 2 });
     } catch (err) {
       console.error('Error updating product:', err);
