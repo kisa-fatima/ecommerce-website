@@ -38,7 +38,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <div className={`product-card${!inStock ? ' out-of-stock' : ''}`} onClick={handleClick} style={{ cursor: 'pointer' }}> 
-      <div className="product-img-wrap">
+      <div className="product-img-wrap" style={{ position: 'relative' }}>
         <img src={thumbnail} alt={name} className="product-img" />
         {discountFlag && (
           <span className="product-discount-badge">-{discountPercentage}%</span>
