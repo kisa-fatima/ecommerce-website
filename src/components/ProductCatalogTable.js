@@ -4,7 +4,7 @@ import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined } from '@ant-de
 import AddProductModal from './AddProductModal';
 import { getCategoryPathById, getAllProducts } from '../services/databaseFunctions';
 import { storage } from '../firebase';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import db from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -138,6 +138,8 @@ const columns = (onView, onEdit, onDelete) => [
 const ProductCatalogTable = () => {
   const [data, setData] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [categoryPaths, setCategoryPaths] = useState({});
@@ -204,9 +206,100 @@ const ProductCatalogTable = () => {
       let categoryName = '', styleName = '', typeName = '';
       if (product.category) {
         const pathArr = await getCategoryPathById(product.category);
-        if (pathArr.length === 1) categoryName = pathArr[0];
-        if (pathArr.length === 2) [categoryName, styleName] = pathArr;
-        if (pathArr.length >= 3) [categoryName, styleName, typeName] = pathArr;
+        categoryName = pathArr[0] || '';
+        styleName = pathArr[1] || '';
+        typeName = pathArr[2] || '';
+      }
+      return {
+        key: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        quantity: product.quantity,
+        discountFlag: product.discountFlag,
+        discountPercentage: product.discountPercentage,
+        category: product.category,
+        categoryName,
+        styleName,
+        typeName,
+        type: product.type,
+        section: product.section,
+        ordered: product.ordered || 0,
+        revenue: product.revenue || 0,
+        catalog: product.catalog || 'Active',
+        stock: product.inStock ? 'In stock' : 'Out of stock',
+        thumbnail: product.thumbnail,
+        image1: product.image1,
+        image2: product.image2,
+      };
+    }));
+    setData(dataWithHierarchy);
+  };
+
+  const handleEdit = (product) => {
+    setProductToEdit(product);
+    setEditModalOpen(true);
+  };
+
+  const handleUpdate = async (updatedProduct) => {
+    setEditModalOpen(false);
+    message.loading({ content: 'Updating product...', key: 'updateProduct' });
+    try {
+      // Upload new images if changed, otherwise keep existing URLs
+      const uploadImage = async (file, path, existingUrl) => {
+        if (!file) return existingUrl || '';
+        if (file.originFileObj) {
+          const storageRef = ref(storage, `${path}/${Date.now()}_${file.name}`);
+          await uploadBytes(storageRef, file.originFileObj);
+          return await getDownloadURL(storageRef);
+        }
+        return file.url || file.thumbUrl || existingUrl || '';
+      };
+      const thumbnailUrl = await uploadImage(updatedProduct.thumbnail, 'product-thumbnails', productToEdit.thumbnail);
+      const image1Url = await uploadImage(updatedProduct.image1, 'product-images', productToEdit.image1);
+      const image2Url = await uploadImage(updatedProduct.image2, 'product-images', productToEdit.image2);
+      // Resolve category/style/type names
+      let categoryName = '', styleName = '', typeName = '';
+      if (updatedProduct.category) {
+        const arr = await getCategoryPathById(updatedProduct.category);
+        categoryName = arr[0] || '';
+        styleName = arr[1] || '';
+        typeName = arr[2] || '';
+      }
+      // Update product in Firestore
+      const docRef = doc(db, 'products', productToEdit.key || productToEdit.id);
+      await updateDoc(docRef, {
+        name: updatedProduct.name,
+        description: updatedProduct.description,
+        price: updatedProduct.price,
+        quantity: updatedProduct.quantity,
+        discountFlag: updatedProduct.discountFlag,
+        discountPercentage: updatedProduct.discountPercentage,
+        category: updatedProduct.category,
+        type: updatedProduct.type,
+        section: updatedProduct.section,
+        categoryName,
+        styleName,
+        typeName,
+        thumbnail: thumbnailUrl,
+        image1: image1Url,
+        image2: image2Url,
+        inStock: updatedProduct.inStock !== undefined ? updatedProduct.inStock : true,
+      });
+      message.success({ content: 'Product updated successfully!', key: 'updateProduct', duration: 2 });
+    } catch (err) {
+      console.error('Error updating product:', err);
+      message.error({ content: 'Failed to update product. Please try again.', key: 'updateProduct', duration: 3 });
+    }
+    // Refetch products after update
+    const products = await getAllProducts();
+    const dataWithHierarchy = await Promise.all(products.map(async (product) => {
+      let categoryName = '', styleName = '', typeName = '';
+      if (product.category) {
+        const pathArr = await getCategoryPathById(product.category);
+        categoryName = pathArr[0] || '';
+        styleName = pathArr[1] || '';
+        typeName = pathArr[2] || '';
       }
       return {
         key: product.id,
@@ -239,10 +332,6 @@ const ProductCatalogTable = () => {
     setViewModalOpen(true);
   };
 
-  const handleEdit = () => {
-    // TODO: Implement edit logic
-  };
-
   const handleDelete = (product) => {
     setData(data.filter((item) => item.key !== product.key));
   };
@@ -256,10 +345,9 @@ const ProductCatalogTable = () => {
         let categoryName = '', styleName = '', typeName = '';
         if (product.category) {
           const pathArr = await getCategoryPathById(product.category);
-          // Assign from right: [category, style, type] (root > ... > leaf)
-          if (pathArr.length === 1) categoryName = pathArr[0];
-          if (pathArr.length === 2) [categoryName, styleName] = pathArr;
-          if (pathArr.length >= 3) [categoryName, styleName, typeName] = pathArr;
+          categoryName = pathArr[0] || '';
+          styleName = pathArr[1] || '';
+          typeName = pathArr[2] || '';
         }
         return {
           key: product.id,
@@ -309,6 +397,7 @@ const ProductCatalogTable = () => {
         style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}
       />
       <AddProductModal visible={modalOpen} onCancel={() => setModalOpen(false)} onAdd={handleAdd} />
+      <AddProductModal visible={editModalOpen} onCancel={() => setEditModalOpen(false)} onAdd={handleUpdate} product={productToEdit} isEditMode />
       <ProductViewModal visible={viewModalOpen} onClose={() => setViewModalOpen(false)} product={selectedProduct} />
     </div>
   );

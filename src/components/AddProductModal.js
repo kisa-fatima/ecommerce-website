@@ -11,7 +11,7 @@ const typeOptions = ['Casual', 'Gym', 'Party', 'Formal'];
 const categoryOptions = ['Men', 'Women', 'Kids'];
 const sectionOptions = ['Top', 'Bottom'];
 
-const AddProductModal = ({ visible, onCancel, onAdd }) => {
+const AddProductModal = ({ visible, onCancel, onAdd, product, isEditMode }) => {
   const [form] = Form.useForm();
   const [thumbnailList, setThumbnailList] = useState([]);
   const [image1List, setImage1List] = useState([]);
@@ -32,6 +32,55 @@ const AddProductModal = ({ visible, onCancel, onAdd }) => {
     }
     fetchCategories();
   }, []);
+
+  // Pre-fill form and images in edit mode
+  useEffect(() => {
+    if (isEditMode && product && visible) {
+      form.setFieldsValue({
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        quantity: product.quantity,
+        discountPercentage: product.discountPercentage,
+        rootCategory: product.category,
+        childCategory: product.type,
+        grandchildCategory: product.section,
+      });
+      setDiscountFlag(!!product.discountFlag);
+      setThumbnailList(product.thumbnail ? [{
+        uid: '-1',
+        name: 'thumbnail',
+        status: 'done',
+        url: product.thumbnail,
+      }] : []);
+      setImage1List(product.image1 ? [{
+        uid: '-2',
+        name: 'image1',
+        status: 'done',
+        url: product.image1,
+      }] : []);
+      setImage2List(product.image2 ? [{
+        uid: '-3',
+        name: 'image2',
+        status: 'done',
+        url: product.image2,
+      }] : []);
+      setSelectedRoot(product.category || null);
+      setSelectedChild(product.type || null);
+      setChildOptions(categories.filter(cat => cat.parentID === product.category));
+      setGrandchildOptions(categories.filter(cat => cat.parentID === product.type));
+    } else if (!visible) {
+      form.resetFields();
+      setThumbnailList([]);
+      setImage1List([]);
+      setImage2List([]);
+      setDiscountFlag(false);
+      setSelectedRoot(null);
+      setSelectedChild(null);
+      setChildOptions([]);
+      setGrandchildOptions([]);
+    }
+  }, [isEditMode, product, visible, categories, form]);
 
   const handleRootChange = (val) => {
     setSelectedRoot(val);
@@ -95,7 +144,7 @@ const AddProductModal = ({ visible, onCancel, onAdd }) => {
 
   return (
     <Modal
-      title="Add Product"
+      title={isEditMode ? 'Edit Product' : 'Add Product'}
       open={visible}
       onCancel={safeCancel}
       footer={[
@@ -121,14 +170,14 @@ const AddProductModal = ({ visible, onCancel, onAdd }) => {
           Cancel
         </Button>,
         <Button
-          key="add"
+          key={isEditMode ? 'edit' : 'add'}
           type="primary"
           onClick={handleOk}
           style={{ background: '#111', color: '#fff', border: 'none', fontWeight: 500 }}
           onMouseOver={e => e.currentTarget.style.background = '#888'}
           onMouseOut={e => e.currentTarget.style.background = '#111'}
         >
-          Add
+          {isEditMode ? 'Update' : 'Add'}
         </Button>
       ]}
       destroyOnClose

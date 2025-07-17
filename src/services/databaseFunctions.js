@@ -80,28 +80,22 @@ export async function getAllCategoriesFlat() {
   return categorySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-// Script: Update all products to have categoryName, typeName, sectionName fields
+// Script: Update all products to have categoryName, styleName, typeName fields
 export async function updateAllProductsCategoryNames() {
   const productsCol = collection(db, 'products');
   const productSnapshot = await getDocs(productsCol);
   const products = productSnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
   for (const product of products) {
-    let categoryName = '', typeName = '', sectionName = '';
-    if (product.categoryID) {
-      const arr = await getCategoryPathById(product.categoryID);
-      categoryName = arr[arr.length - 1] || '';
-    }
-    if (product.type) {
-      const arr = await getCategoryPathById(product.type);
-      typeName = arr[arr.length - 1] || '';
-    }
-    if (product.section) {
-      const arr = await getCategoryPathById(product.section);
-      sectionName = arr[arr.length - 1] || '';
+    let categoryName = '', styleName = '', typeName = '';
+    if (product.category) {
+      const arr = await getCategoryPathById(product.category);
+      categoryName = arr[0] || '';
+      styleName = arr[1] || '';
+      typeName = arr[2] || '';
     }
     const docRef = doc(db, 'products', product.id);
-    await updateDoc(docRef, { categoryName, typeName, sectionName });
-    console.log(`Updated product ${product.id}:`, { categoryName, typeName, sectionName });
+    await updateDoc(docRef, { categoryName, styleName, typeName });
+    console.log(`Updated product ${product.id}:`, { categoryName, styleName, typeName });
   }
-  alert('All products updated with category/type/section names!');
+  alert('All products updated with category/style/type names!');
 }
