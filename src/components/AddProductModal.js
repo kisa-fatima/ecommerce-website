@@ -102,12 +102,13 @@ const AddProductModal = ({ visible, onCancel, onAdd, product, isEditMode }) => {
       return;
     }
     form.validateFields().then(values => {
-      let categoryId = values.rootCategory;
+      let categoryId = values.grandchildCategory || values.childCategory || values.rootCategory;
       let typeId = values.childCategory ? values.childCategory : undefined;
       let sectionId = values.grandchildCategory ? values.grandchildCategory : undefined;
       onAdd({
         ...values,
-        category: categoryId,
+        category: values.rootCategory, // always top-level
+        categoryId: categoryId, // always deepest selected
         ...(typeId && { type: typeId }),
         ...(sectionId && { section: sectionId }),
         discountFlag,
