@@ -192,7 +192,9 @@ const ProductCatalogTable = () => {
         ordered: product.ordered || 0,
         revenue: product.revenue || 0,
         catalog: product.catalog || 'Active',
-        stock: product.inStock ? 'In stock' : 'Out of stock',
+        stock: product.inStock === true ? 'In stock' : 'Out of stock',
+        inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
+        state: typeof product.state === 'boolean' ? product.state : false,
         thumbnail: product.thumbnail,
         image1: product.image1,
         image2: product.image2,
@@ -203,7 +205,9 @@ const ProductCatalogTable = () => {
   };
 
   const handleEdit = (product) => {
-    setProductToEdit(product);
+    // Always use the latest product data from the table state
+    const latestProduct = data.find(row => row.key === product.key || row.key === product.id) || product;
+    setProductToEdit(latestProduct);
     setEditModalOpen(true);
   };
 
@@ -247,7 +251,9 @@ const ProductCatalogTable = () => {
         ordered: product.ordered || 0,
         revenue: product.revenue || 0,
         catalog: product.catalog || 'Active',
-        stock: product.inStock ? 'In stock' : 'Out of stock',
+        stock: product.inStock === true ? 'In stock' : 'Out of stock',
+        inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
+        state: typeof product.state === 'boolean' ? product.state : false,
         thumbnail: product.thumbnail,
         image1: product.image1,
         image2: product.image2,
@@ -301,7 +307,9 @@ const ProductCatalogTable = () => {
           ordered: product.ordered || 0,
           revenue: product.revenue || 0,
           catalog: product.catalog || 'Active',
-          stock: product.inStock ? 'In stock' : 'Out of stock',
+          stock: product.inStock === true ? 'In stock' : 'Out of stock',
+          inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
+          state: typeof product.state === 'boolean' ? product.state : false,
           thumbnail: product.thumbnail,
           image1: product.image1,
           image2: product.image2,

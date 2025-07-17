@@ -83,7 +83,7 @@ export async function getAllCategoriesFlat() {
 }
 
 // Add a new product with image upload and category path resolution
-export async function handleAddProduct(product) {
+export async function handleAddProduct(formValues) {
   // 1. Upload images to Firebase Storage
   const uploadImage = async (file, path) => {
     if (!file || !file.originFileObj) return '';
@@ -91,46 +91,50 @@ export async function handleAddProduct(product) {
     await uploadBytes(storageRef, file.originFileObj);
     return await getDownloadURL(storageRef);
   };
-  const thumbnailUrl = await uploadImage(product.thumbnail, 'product-thumbnails');
-  const image1Url = await uploadImage(product.image1, 'product-images');
-  const image2Url = await uploadImage(product.image2, 'product-images');
+  const thumbnailUrl = await uploadImage(formValues.thumbnail, 'product-thumbnails');
+  const image1Url = await uploadImage(formValues.image1, 'product-images');
+  const image2Url = await uploadImage(formValues.image2, 'product-images');
   // 2. Resolve category/style/type names
   let categoryName = '', styleName = '', typeName = '';
-  if (product.category) {
-    const arr = await getCategoryPathById(product.category);
+  const categoryId = formValues.grandchildCategory || formValues.childCategory || formValues.rootCategory;
+  if (categoryId) {
+    const arr = await getCategoryPathById(categoryId);
     categoryName = arr[0] || '';
     styleName = arr[1] || '';
     typeName = arr[2] || '';
   }
   // 3. Add product to Firestore with all required fields
   const productData = {
-    category: product.category,
-    categoryID: product.categoryId, // Save the deepest category ID as categoryID
+    category: formValues.rootCategory,
+    categoryID: categoryId,
     categoryName,
     styleName,
     typeName,
-    description: product.description,
-    discountFlag: product.discountFlag,
-    discountPercentage: product.discountPercentage !== undefined ? product.discountPercentage : null,
+    type: formValues.childCategory,
+    section: formValues.grandchildCategory,
+    description: formValues.description,
+    discountFlag: formValues.discountFlag,
+    discountPercentage: formValues.discountPercentage !== undefined ? formValues.discountPercentage : null,
     image1: image1Url || '',
     image2: image2Url || '',
-    inStock: product.inStock !== undefined ? product.inStock : true,
-    name: product.name,
-    price: product.price,
-    quantity: product.quantity,
+    inStock: formValues.inStock !== undefined ? formValues.inStock : true,
+    name: formValues.name,
+    price: formValues.price,
+    quantity: formValues.quantity,
     rating: (Math.random() * 2 + 3).toFixed(1),
     soldCount: 0,
-    state: true,
+    state: formValues.state !== undefined ? formValues.state : true,
     thumbnail: thumbnailUrl || '',
   };
   return await addDoc(collection(db, 'products'), productData);
 }
 
 // Update an existing product with image upload and category path resolution
-export async function handleUpdateProduct(productId, updatedProduct, existingProduct) {
-  // Upload new images if changed, otherwise keep existing URLs
+export async function handleUpdateProduct(productId, formValues, existingProduct) {
+  // Always use existing images if new ones are not provided
   const uploadImage = async (file, path, existingUrl) => {
-    if (!file) return existingUrl || '';
+    if (!file && existingUrl) return existingUrl;
+    if (!file) return '';
     if (file.originFileObj) {
       const storageRef = ref(storage, `${path}/${Date.now()}_${file.name}`);
       await uploadBytes(storageRef, file.originFileObj);
@@ -138,36 +142,36 @@ export async function handleUpdateProduct(productId, updatedProduct, existingPro
     }
     return file.url || file.thumbUrl || existingUrl || '';
   };
-  const thumbnailUrl = await uploadImage(updatedProduct.thumbnail, 'product-thumbnails', existingProduct.thumbnail);
-  const image1Url = await uploadImage(updatedProduct.image1, 'product-images', existingProduct.image1);
-  const image2Url = await uploadImage(updatedProduct.image2, 'product-images', existingProduct.image2);
-  // Resolve category/style/type names
-  let categoryName = '', styleName = '', typeName = '';
-  if (updatedProduct.category) {
-    const arr = await getCategoryPathById(updatedProduct.category);
-    categoryName = arr[0] || '';
-    styleName = arr[1] || '';
-    typeName = arr[2] || '';
-  }
-  // Update product in Firestore
+  const thumbnailUrl = await uploadImage(
+    formValues.thumbnail !== undefined ? formValues.thumbnail : existingProduct.thumbnail,
+    'product-thumbnails',
+    existingProduct.thumbnail
+  );
+  const image1Url = await uploadImage(
+    formValues.image1 !== undefined ? formValues.image1 : existingProduct.image1,
+    'product-images',
+    existingProduct.image1
+  );
+  const image2Url = await uploadImage(
+    formValues.image2 !== undefined ? formValues.image2 : existingProduct.image2,
+    'product-images',
+    existingProduct.image2
+  );
+  // Only update allowed fields
   const docRef = doc(db, 'products', productId);
   await updateDoc(docRef, {
-    name: updatedProduct.name,
-    description: updatedProduct.description,
-    price: updatedProduct.price,
-    quantity: updatedProduct.quantity,
-    discountFlag: updatedProduct.discountFlag,
-    discountPercentage: updatedProduct.discountPercentage !== undefined ? updatedProduct.discountPercentage : null,
-    category: updatedProduct.category,
-    type: updatedProduct.type,
-    section: updatedProduct.section,
-    categoryName,
-    styleName,
-    typeName,
+    name: formValues.name,
+    description: formValues.description,
+    price: formValues.price,
+    quantity: formValues.quantity,
+    discountFlag: formValues.discountFlag,
+    discountPercentage: formValues.discountPercentage !== undefined ? formValues.discountPercentage : null,
+    inStock: formValues.inStock !== undefined ? formValues.inStock : true,
+    state: formValues.state !== undefined ? formValues.state : true,
     thumbnail: thumbnailUrl,
     image1: image1Url,
     image2: image2Url,
-    inStock: updatedProduct.inStock !== undefined ? updatedProduct.inStock : true,
+    // Do NOT update category, type, or section
   });
 }
 

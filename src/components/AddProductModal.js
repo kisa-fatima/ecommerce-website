@@ -33,9 +33,38 @@ const AddProductModal = ({ visible, onCancel, onAdd, product, isEditMode }) => {
     fetchCategories();
   }, []);
 
-  // Pre-fill form and images in edit mode
+  // Add a new useEffect to handle edit mode value/option setup after categories are loaded
   useEffect(() => {
-    if (isEditMode && product && visible) {
+    if (isEditMode && product && visible && categories.length > 0) {
+      // Ensure current category is in rootOptions
+      let rootOpts = categories.filter(cat => !cat.parentID);
+      if (product.category && !rootOpts.some(cat => cat.id === product.category)) {
+        rootOpts = [
+          ...rootOpts,
+          { id: product.category, name: product.categoryName || 'Current Category' }
+        ];
+      }
+      setRootOptions(rootOpts);
+      // Ensure current type is in childOptions
+      let childOpts = categories.filter(cat => cat.parentID === product.category);
+      if (product.type && !childOpts.some(cat => cat.id === product.type)) {
+        childOpts = [
+          ...childOpts,
+          { id: product.type, name: product.styleName || 'Current Type', parentID: product.category }
+        ];
+      }
+      setChildOptions(childOpts);
+      // Ensure current section is in grandchildOptions
+      let grandchildOpts = categories.filter(cat => cat.parentID === product.type);
+      if (product.section && !grandchildOpts.some(cat => cat.id === product.section)) {
+        grandchildOpts = [
+          ...grandchildOpts,
+          { id: product.section, name: product.typeName || 'Current Section', parentID: product.type }
+        ];
+      }
+      setGrandchildOptions(grandchildOpts);
+      setSelectedRoot(product.category || null);
+      setSelectedChild(product.type || null);
       form.setFieldsValue({
         name: product.name,
         description: product.description,
@@ -45,6 +74,8 @@ const AddProductModal = ({ visible, onCancel, onAdd, product, isEditMode }) => {
         rootCategory: product.category,
         childCategory: product.type,
         grandchildCategory: product.section,
+        inStock: typeof product.inStock === 'boolean' ? product.inStock : true,
+        state: typeof product.state === 'boolean' ? product.state : true,
       });
       setDiscountFlag(!!product.discountFlag);
       setThumbnailList(product.thumbnail ? [{
@@ -65,10 +96,6 @@ const AddProductModal = ({ visible, onCancel, onAdd, product, isEditMode }) => {
         status: 'done',
         url: product.image2,
       }] : []);
-      setSelectedRoot(product.category || null);
-      setSelectedChild(product.type || null);
-      setChildOptions(categories.filter(cat => cat.parentID === product.category));
-      setGrandchildOptions(categories.filter(cat => cat.parentID === product.type));
     } else if (!visible) {
       form.resetFields();
       setThumbnailList([]);
@@ -81,6 +108,16 @@ const AddProductModal = ({ visible, onCancel, onAdd, product, isEditMode }) => {
       setGrandchildOptions([]);
     }
   }, [isEditMode, product, visible, categories, form]);
+
+  // Add this effect to set default checkbox values in add mode
+  useEffect(() => {
+    if (!isEditMode && visible) {
+      form.setFieldsValue({
+        inStock: true,
+        state: true,
+      });
+    }
+  }, [isEditMode, visible, form]);
 
   const handleRootChange = (val) => {
     setSelectedRoot(val);
@@ -96,26 +133,26 @@ const AddProductModal = ({ visible, onCancel, onAdd, product, isEditMode }) => {
   };
 
   const handleOk = () => {
-    // Check for valid image files
-    if (!thumbnailList[0] || !thumbnailList[0].originFileObj || !image1List[0] || !image1List[0].originFileObj || !image2List[0] || !image2List[0].originFileObj) {
-      message.error('Please upload all three images (thumbnail, image 1, image 2) before adding the product.');
-      return;
+    if (!isEditMode) {
+      // Add mode: require images
+      if (!thumbnailList[0] || !thumbnailList[0].originFileObj || !image1List[0] || !image1List[0].originFileObj || !image2List[0] || !image2List[0].originFileObj) {
+        message.error('Please upload all three images (thumbnail, image 1, image 2) before adding the product.');
+        return;
+      }
     }
     form.validateFields().then(values => {
-      let categoryId = values.grandchildCategory || values.childCategory || values.rootCategory;
-      let typeId = values.childCategory ? values.childCategory : undefined;
-      let sectionId = values.grandchildCategory ? values.grandchildCategory : undefined;
-      onAdd({
+      // Only pass raw form values and context to onAdd
+      const payload = {
         ...values,
-        category: values.rootCategory, // always top-level
-        categoryId: categoryId, // always deepest selected
-        ...(typeId && { type: typeId }),
-        ...(sectionId && { section: sectionId }),
         discountFlag,
-        thumbnail: thumbnailList[0],
-        image1: image1List[0],
-        image2: image2List[0],
-      });
+        // Only add images in add mode
+        ...(isEditMode ? {} : {
+          thumbnail: thumbnailList[0],
+          image1: image1List[0],
+          image2: image2List[0],
+        })
+      };
+      onAdd(payload);
       form.resetFields();
       setThumbnailList([]);
       setImage1List([]);
@@ -214,66 +251,92 @@ const AddProductModal = ({ visible, onCancel, onAdd, product, isEditMode }) => {
             )}
           </Row>
         </Form.Item>
-        <Row gutter={12}>
-          <Col span={8}>
-            <Form.Item name="rootCategory" label="Category" rules={[{ required: true, message: 'Please select a root category' }]}> 
-              <Select placeholder="Select root category" onChange={handleRootChange} value={selectedRoot} allowClear>
-                {rootOptions.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
-              </Select>
+        {/* Remove headings for In Stock and Visible on Site, keep only the checkboxes */}
+        <Form.Item name="inStock" valuePropName="checked">
+          <Checkbox>In Stock</Checkbox>
+        </Form.Item>
+        <Form.Item name="state" valuePropName="checked">
+          <Checkbox>Visible on Site</Checkbox>
+        </Form.Item>
+        {isEditMode ? (
+          <Form.Item label="Category Path">
+            <div style={{ padding: '8px 12px', background: '#fafafa', borderRadius: 4, border: '1px solid #eee', color: '#333' }}>
+              {[
+                product?.categoryName,
+                product?.styleName,
+                product?.typeName
+              ].filter(Boolean).join(' > ') || 'N/A'}
+            </div>
+          </Form.Item>
+        ) : (
+          <Row gutter={12}>
+            <Col span={8}>
+              <Form.Item name="rootCategory" label="Category" rules={[{ required: true, message: 'Please select a root category' }]}> 
+                <Select placeholder="Select root category" onChange={handleRootChange} value={selectedRoot} allowClear>
+                  {rootOptions.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              {childOptions.length > 0 && (
+                <Form.Item name="childCategory" label="Style" rules={[{ required: false }]}> 
+                  <Select placeholder="Select style" onChange={handleChildChange} value={selectedChild} allowClear>
+                    {childOptions.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
+                  </Select>
+                </Form.Item>
+              )}
+            </Col>
+            <Col span={8}>
+              {grandchildOptions.length > 0 && (
+                <Form.Item name="grandchildCategory" label="type" rules={[{ required: false }]}> 
+                  <Select placeholder="Select sub-subcategory" allowClear>
+                    {grandchildOptions.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
+                  </Select>
+                </Form.Item>
+              )}
+            </Col>
+          </Row>
+        )}
+        {!isEditMode && (
+          <>
+            <Form.Item name="thumbnail" label="Thumbnail Image" rules={[{ required: true, message: 'Please upload a thumbnail image' }]}> 
+              <Upload
+                beforeUpload={() => false}
+                fileList={Array.isArray(thumbnailList) ? thumbnailList : []}
+                onChange={({ fileList }) => setThumbnailList(Array.isArray(fileList) ? fileList : [])}
+                maxCount={1}
+                accept="image/*"
+                showUploadList={{ showRemoveIcon: !isEditMode }}
+              >
+                <Button icon={<UploadOutlined />}>Upload Thumbnail</Button>
+              </Upload>
             </Form.Item>
-          </Col>
-          <Col span={8}>
-            {childOptions.length > 0 && (
-              <Form.Item name="childCategory" label="Style" rules={[{ required: false }]}> 
-                <Select placeholder="Select style" onChange={handleChildChange} value={selectedChild} allowClear>
-                  {childOptions.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
-                </Select>
-              </Form.Item>
-            )}
-          </Col>
-          <Col span={8}>
-            {grandchildOptions.length > 0 && (
-              <Form.Item name="grandchildCategory" label="type" rules={[{ required: false }]}> 
-                <Select placeholder="Select sub-subcategory" allowClear>
-                  {grandchildOptions.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
-                </Select>
-              </Form.Item>
-            )}
-          </Col>
-        </Row>
-        <Form.Item name="thumbnail" label="Thumbnail Image" rules={[{ required: true, message: 'Please upload a thumbnail image' }]}> 
-          <Upload
-            beforeUpload={() => false}
-            fileList={Array.isArray(thumbnailList) ? thumbnailList : []}
-            onChange={({ fileList }) => setThumbnailList(Array.isArray(fileList) ? fileList : [])}
-            maxCount={1}
-            accept="image/*"
-          >
-            <Button icon={<UploadOutlined />}>Upload Thumbnail</Button>
-          </Upload>
-        </Form.Item>
-        <Form.Item name="image1" label="Image 1" rules={[{ required: true, message: 'Please upload image 1' }]}> 
-          <Upload
-            beforeUpload={() => false}
-            fileList={Array.isArray(image1List) ? image1List : []}
-            onChange={({ fileList }) => setImage1List(Array.isArray(fileList) ? fileList : [])}
-            maxCount={1}
-            accept="image/*"
-          >
-            <Button icon={<UploadOutlined />}>Upload Image 1</Button>
-          </Upload>
-        </Form.Item>
-        <Form.Item name="image2" label="Image 2" rules={[{ required: true, message: 'Please upload image 2' }]}> 
-          <Upload
-            beforeUpload={() => false}
-            fileList={Array.isArray(image2List) ? image2List : []}
-            onChange={({ fileList }) => setImage2List(Array.isArray(fileList) ? fileList : [])}
-            maxCount={1}
-            accept="image/*"
-          >
-            <Button icon={<UploadOutlined />}>Upload Image 2</Button>
-          </Upload>
-        </Form.Item>
+            <Form.Item name="image1" label="Image 1" rules={[{ required: true, message: 'Please upload image 1' }]}> 
+              <Upload
+                beforeUpload={() => false}
+                fileList={Array.isArray(image1List) ? image1List : []}
+                onChange={({ fileList }) => setImage1List(Array.isArray(fileList) ? fileList : [])}
+                maxCount={1}
+                accept="image/*"
+                showUploadList={{ showRemoveIcon: !isEditMode }}
+              >
+                <Button icon={<UploadOutlined />}>Upload Image 1</Button>
+              </Upload>
+            </Form.Item>
+            <Form.Item name="image2" label="Image 2" rules={[{ required: true, message: 'Please upload image 2' }]}> 
+              <Upload
+                beforeUpload={() => false}
+                fileList={Array.isArray(image2List) ? image2List : []}
+                onChange={({ fileList }) => setImage2List(Array.isArray(fileList) ? fileList : [])}
+                maxCount={1}
+                accept="image/*"
+                showUploadList={{ showRemoveIcon: !isEditMode }}
+              >
+                <Button icon={<UploadOutlined />}>Upload Image 2</Button>
+              </Upload>
+            </Form.Item>
+          </>
+        )}
       </Form>
     </Modal>
   );
