@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Modal, Form, Input, Select, message } from 'antd';
+import { Table, Button, Space } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import '../styles/AdminCategories.css';
 import { getCategoryHierarchy } from '../services/databaseFunctions';
+import { Modal, Input, Form, message } from 'antd';
 
 const columns = [
   {
@@ -17,6 +18,7 @@ const columns = [
     width: 120,
     render: (_, record) => (
       <Space>
+        <Button type="primary" shape="circle" icon={<PlusOutlined />} size="small" className="cat-add-btn" />
         <Button danger shape="circle" icon={<DeleteOutlined />} size="small" className="cat-del-btn" />
       </Space>
     ),
@@ -27,6 +29,7 @@ const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [addParentId, setAddParentId] = useState(null);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -43,45 +46,65 @@ const AdminCategories = () => {
     fetchCategories();
   }, []);
 
-  // Flatten categories for dropdown
-  const flattenCategories = (cats) => {
-    let result = [];
-    for (const cat of cats) {
-      result.push(cat);
-      if (cat.children && cat.children.length > 0) {
-        result = result.concat(flattenCategories(cat.children));
-      }
-    }
-    return result;
+  // Handler for add button in table
+  const handleAddClick = (parentId = null) => {
+    setAddParentId(parentId);
+    setAddModalOpen(true);
+    form.resetFields();
   };
-  const flatCategories = flattenCategories(categories);
 
+  // Handler for modal submit
   const handleAddCategory = () => {
     form.validateFields().then(values => {
-      // For now, just close the modal and reset
+      // Here you would call your addCategory function with values.name and addParentId
+      message.success(`Category '${values.name}' would be added under parent ID: ${addParentId || 'root'}`);
       setAddModalOpen(false);
-      form.resetFields();
-      message.success('Category added (not yet saved to DB)');
     });
   };
 
+  // Handler for modal cancel
+  const handleCancel = () => {
+    setAddModalOpen(false);
+  };
+
+  // Updated columns to use handleAddClick
+  const columnsWithAdd = [
+    {
+      title: 'Category',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text) => <span className="cat-name">{text}</span>,
+    },
+    {
+      title: '',
+      key: 'actions',
+      width: 120,
+      render: (_, record) => (
+        <Space>
+          <Button type="primary" shape="circle" icon={<PlusOutlined />} size="small" className="cat-add-btn" onClick={() => handleAddClick(record.id)} />
+          <Button danger shape="circle" icon={<DeleteOutlined />} size="small" className="cat-del-btn" />
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <div className="admin-categories-container">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h2 className="admin-categories-title">Catalog Management</h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <h2 className="admin-categories-title" style={{ margin: 0 }}>Catalog Management</h2>
         <Button
           type="primary"
-          icon={<PlusOutlined />} 
-          style={{ float: 'right', marginLeft: 'auto', background: '#111', border: 'none' }}
-          onClick={() => setAddModalOpen(true)}
+          icon={<PlusOutlined />}
+          style={{ background: '#111', color: '#fff', border: 'none', fontWeight: 500 }}
+          onClick={() => handleAddClick(null)}
           onMouseOver={e => e.currentTarget.style.background = '#888'}
           onMouseOut={e => e.currentTarget.style.background = '#111'}
         >
-          Add
+          Add Root Category
         </Button>
       </div>
       <Table
-        columns={columns}
+        columns={columnsWithAdd}
         dataSource={categories}
         pagination={false}
         rowKey="id"
@@ -92,40 +115,48 @@ const AdminCategories = () => {
         loading={loading}
       />
       <Modal
-        title="Add Category"
+        title={addParentId ? 'Add Subcategory' : 'Add Root Category'}
         open={addModalOpen}
-        onCancel={() => { setAddModalOpen(false); form.resetFields(); }}
-        onOk={handleAddCategory}
+        onCancel={handleCancel}
+        footer={[
+          <Button
+            key="cancel"
+            onClick={handleCancel}
+            style={{
+              background: '#fff',
+              color: '#111',
+              border: '1.5px solid #bbb',
+              boxShadow: 'none',
+              fontWeight: 500
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.border = '1.5px solid #111';
+              e.currentTarget.style.color = '#111';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.border = '1.5px solid #bbb';
+              e.currentTarget.style.color = '#111';
+            }}
+          >
+            Cancel
+          </Button>,
+          <Button
+            key="add"
+            type="primary"
+            onClick={handleAddCategory}
+            style={{ background: '#111', color: '#fff', border: 'none', fontWeight: 500 }}
+            onMouseOver={e => e.currentTarget.style.background = '#888'}
+            onMouseOut={e => e.currentTarget.style.background = '#111'}
+          >
+            Add
+          </Button>
+        ]}
         okText="Add"
         destroyOnClose
-        okButtonProps={{
-          style: { background: '#111', border: 'none', fontWeight: 500 },
-          onMouseOver: e => e.currentTarget.style.background = '#888',
-          onMouseOut: e => e.currentTarget.style.background = '#111',
-        }}
-        cancelButtonProps={{
-          style: { color: '#111', border: '1.5px solid #bbb', fontWeight: 500 },
-          onMouseOver: e => {
-            e.currentTarget.style.color = '#111';
-            e.currentTarget.style.border = '1.5px solid #111';
-          },
-          onMouseOut: e => {
-            e.currentTarget.style.color = '#111';
-            e.currentTarget.style.border = '1.5px solid #bbb';
-          },
-        }}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="name" label="Category Name" rules={[{ required: true, message: 'Please enter a category name' }]}> 
+          <Form.Item name="name" label="Category Name" rules={[{ required: true, message: 'Please enter a category name' }]}>
             <Input placeholder="Enter category name" />
-          </Form.Item>
-          <Form.Item name="parent" label="Parent Category" initialValue={null}>
-            <Select placeholder="Select parent category">
-              <Select.Option value={null}>None</Select.Option>
-              {flatCategories.map(cat => (
-                <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
-              ))}
-            </Select>
           </Form.Item>
         </Form>
       </Modal>
