@@ -125,7 +125,7 @@ const ProductPage = () => {
               return <span key={i} style={{ color: '#ddd' }}>★</span>;
             })}
           </span>
-          <span className="rating-value">{typeof product.rating === 'number' ? product.rating.toFixed(1) : 'N/A'}/5</span>
+          <span className="rating-value">{(typeof product.rating === 'number' && product.rating !== null && product.rating !== undefined) ? product.rating.toFixed(1) : (product.rating ? Number(product.rating).toFixed(1) : 'N/A')}/5</span>
         </div>
         <div className="productpage-pricing">
           <span className="price">${product.price}</span>
