@@ -56,7 +56,7 @@ const Login = () => {
   // Redirect to admin dashboard on successful admin login
   useEffect(() => {
     if (user && loginType === 'Admin' && mode === 'login') {
-      navigate('/admin-dashboard'); // Ensure this is the correct path
+      navigate('/admin'); // Correct route
     }
   }, [user, loginType, mode, navigate]);
 

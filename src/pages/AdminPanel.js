@@ -27,7 +27,7 @@ const AdminPanel = () => {
           </div>
           <Content className="admin-content-mobile">
             <Routes>
-              <Route path="/" element={<AdminDashboard />} />
+              <Route index element={<AdminDashboard />} />
               <Route path="products" element={<AdminProducts />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="coupons" element={<CouponsPlaceholder />} />

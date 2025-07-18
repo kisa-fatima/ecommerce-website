@@ -24,7 +24,7 @@ const GlareHover = ({
   const vars = {
     '--gh-width': '100%',
     '--gh-height': '100%',
-    '--gh-bg': 'inherit',
+    '--gh-bg': '#111', // Use a visible background for testing
     '--gh-br': '16px',
     '--gh-border': '#ececec',
     '--gh-angle': `${glareAngle}deg`,
