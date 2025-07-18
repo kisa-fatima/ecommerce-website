@@ -15,12 +15,11 @@
   box-shadow: none;
   background: none;
   padding: 0;
-  margin-top: -5px;
 }
 
 .profile-dropdown-menu {
   position: absolute;
-  top: 32px;
+  top: 100%; /* Place menu directly below icon */
   right: 0;
   background: #fff;
   border-radius: 8px;
