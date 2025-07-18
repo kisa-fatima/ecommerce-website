@@ -2,14 +2,24 @@ import React from 'react';
 import '../styles/OrderSum.css';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const OrderSum = ({ showCheckoutBtn = true }) => {
   const cart = useSelector(state => state.cart.items);
+  const user = useSelector(state => state.user.user);
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const delivery = 15;
   const total = subtotal + delivery;
   const navigate = useNavigate();
   const isCartEmpty = cart.length === 0;
+
+  const handleCheckoutClick = () => {
+    if (!user) {
+      toast.error('You must be logged in to checkout.', { position: 'top-right' });
+      return;
+    }
+    navigate('/checkout');
+  };
 
   return (
     <div className="order-summary-box">
@@ -29,7 +39,7 @@ const OrderSum = ({ showCheckoutBtn = true }) => {
       {showCheckoutBtn && (
         <button 
           className="order-summary-checkout-btn"
-          onClick={() => navigate('/checkout')}
+          onClick={handleCheckoutClick}
           disabled={isCartEmpty}
           style={isCartEmpty ? { background: '#bbb', color: '#fff', cursor: 'not-allowed' } : {}}
         >

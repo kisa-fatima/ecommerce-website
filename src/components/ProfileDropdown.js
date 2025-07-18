@@ -3,14 +3,20 @@ import { FaUser } from 'react-icons/fa';
 import './ProfileDropdown.css';
 import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
+import { useDispatch } from 'react-redux';
+import { userLogout } from '../store/userSlice';
 
 const ProfileDropdown = ({ userName }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
     localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userId');
+    dispatch(userLogout());
     setLoading(true);
     setTimeout(() => {
       setLoading(false);

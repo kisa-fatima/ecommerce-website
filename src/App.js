@@ -26,6 +26,8 @@ import CheckoutPage from './pages/CheckoutPage';
 import PanelHeader from './components/PanelHeader';
 import MyAccount from './pages/MyAccount';
 import MyOrders from './pages/MyOrders';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const ADMIN_EMAIL = 'admin123@gmail.com';
 
 function AppContent() {
@@ -86,6 +88,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
+      <ToastContainer position="top-right" autoClose={1500} />
       {isAdmin && <PanelHeader />}
       <AppContent />
     </Router>
