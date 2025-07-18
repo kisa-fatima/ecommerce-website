@@ -12,19 +12,19 @@ const { Sider } = Layout;
 
 const menuItems = [
   {
-    key: '/admin-dashboard',
+    key: '/admin',
     icon: <AppstoreOutlined />,
-    label: <NavLink to="/admin-dashboard">Dashboard</NavLink>,
+    label: <NavLink to="/admin">Dashboard</NavLink>,
   },
   {
-    key: '/admin-dashboard/products',
+    key: '/admin/products',
     icon: <UnorderedListOutlined />,
-    label: <NavLink to="/admin-dashboard/products">Product catalog</NavLink>,
+    label: <NavLink to="/admin/products">Product catalog</NavLink>,
   },
   {
-    key: '/admin-dashboard/categories',
+    key: '/admin/categories',
     icon: <BoxPlotOutlined />,
-    label: <NavLink to="/admin-dashboard/categories">Category management</NavLink>,
+    label: <NavLink to="/admin/categories">Category management</NavLink>,
   }
 ];
 

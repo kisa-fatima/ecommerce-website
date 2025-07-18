@@ -11,11 +11,11 @@ const PanelHeader = ({ children }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   // If on landing page, show Dashboard button, else show Home button
   const isLanding = location.pathname === '/';
-  const isAdmin = location.pathname.startsWith('/admin-dashboard');
+  const isAdmin = location.pathname.startsWith('/admin');
 
   const handleNav = () => {
     if (isLanding) {
-      navigate('/admin-dashboard');
+      navigate('/admin');
     } else {
       navigate('/');
     }
