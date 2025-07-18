@@ -43,7 +43,19 @@ const AdminSidebar = () => {
   }, []);
 
   // Ensure the correct menu item is selected
-  const selectedKey = menuItems.find(item => location.pathname.startsWith(item.key))?.key || '/admin-dashboard';
+  function getSelectedKey(pathname) {
+    // Find the menu item with the longest matching prefix
+    let match = menuItems[0].key;
+    let maxLength = 0;
+    menuItems.forEach(item => {
+      if (pathname.startsWith(item.key) && item.key.length > maxLength) {
+        match = item.key;
+        maxLength = item.key.length;
+      }
+    });
+    return match;
+  }
+  const selectedKey = getSelectedKey(location.pathname);
 
   // Only show border when not collapsed
   const siderStyle = collapsed
