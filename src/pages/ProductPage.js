@@ -5,6 +5,8 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import { getCategoryPathById, getCategoryPathIdsById } from '../services/databaseFunctions';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/cartSlice';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const isMobile = () => window.innerWidth <= 900;
 
@@ -99,16 +101,26 @@ const ProductPage = () => {
     { name: product.name, link: '' }
   ];
 
+  const getDiscountedPrice = (price, discountFlag, discountPercentage) => {
+    if (!discountFlag) return price;
+    return Math.round(price * (1 - discountPercentage / 100));
+  };
+
   const handleAddToCart = () => {
+    const discountedPrice = getDiscountedPrice(product.price, product.discountFlag, product.discountPercentage);
     dispatch(addToCart({
       id: product.id,
       name: product.name,
-      price: product.price,
+      price: discountedPrice,
+      originalPrice: product.price,
+      discountFlag: product.discountFlag,
+      discountPercentage: product.discountPercentage,
       image: product.thumbnail,
       size: selectedSize,
       color: colors[selectedColor],
       quantity,
     }));
+    toast.success('Added to cart!', { position: 'top-right', autoClose: 2000 });
   };
 
   return (
@@ -186,7 +198,14 @@ const ProductPage = () => {
               <span>{quantity}</span>
               <button onClick={() => setQuantity(q => q + 1)}>+</button>
             </div>
-            <button className="add-to-cart-btn" onClick={handleAddToCart}>Add to Cart</button>
+            <button 
+              className="add-to-cart-btn" 
+              onClick={handleAddToCart} 
+              disabled={!product.inStock}
+              style={!product.inStock ? { background: '#bbb', color: '#fff', cursor: 'not-allowed' } : {}}
+            >
+              {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+            </button>
           </div>
         </div>
       </div>

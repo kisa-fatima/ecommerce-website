@@ -104,4 +104,27 @@
 .arrow {
   font-size: 1.3rem;
   margin-left: 8px;
+}
+
+.order-summary-continue-btn {
+  width: 100%;
+  background: #fff;
+  color: #111;
+  border: 2px solid #111;
+  border-radius: 28px;
+  padding: 16px 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.order-summary-continue-btn:hover {
+  background: #f3f3f3;
+  color: #111;
 } 

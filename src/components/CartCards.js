@@ -10,7 +10,15 @@ const CartCards = ({ item, onQtyChange, onRemove }) => {
         <div className="cart-card-title">{item.name}</div>
         <div className="cart-card-meta">Size: {item.size}</div>
         <div className="cart-card-meta">Color: {item.color}</div>
-        <div className="cart-card-price">${item.price}</div>
+        <div className="cart-card-price">
+          ${item.price}
+          {item.discountFlag && (
+            <>
+              <span className="old-price" style={{marginLeft:8}}>${item.originalPrice}</span>
+              <span className="discount" style={{marginLeft:4, color:'#ff3b3b'}}>-{item.discountPercentage}%</span>
+            </>
+          )}
+        </div>
       </div>
       <div className="cart-card-actions">
         <div className="cart-card-qty">
@@ -24,4 +32,4 @@ const CartCards = ({ item, onQtyChange, onRemove }) => {
   );
 };
 
-export default CartCards; 
+export default CartCards;
