@@ -13,6 +13,8 @@ function* loginSaga(action) {
       throw new Error('Not an admin');
     }
     yield put(loginSuccess(userCredential.user));
+    // Persist admin info in localStorage
+    localStorage.setItem('adminData', JSON.stringify(userCredential.user));
   } catch (error) {
     yield put(loginFailure(error.message));
   }
@@ -20,6 +22,8 @@ function* loginSaga(action) {
 
 function* logoutSaga() {
   yield call(signOut, auth);
+  // Remove admin info from localStorage
+  localStorage.removeItem('adminData');
 }
 
 export default function* authRootSaga() {

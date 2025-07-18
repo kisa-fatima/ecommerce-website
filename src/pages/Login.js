@@ -5,7 +5,7 @@ import '../styles/Global.css';
 import { Formik, Form, Field, ErrorMessage } from 'formik'; // Import Formik
 import * as Yup from 'yup'; // Import Yup
 import { useDispatch, useSelector } from 'react-redux';
-import { loginRequest } from '../store/authSlice';
+import { loginRequest, loginSuccess } from '../store/authSlice';
 import { userLogin } from '../store/userSlice';
 import db from '../firebase';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
@@ -58,6 +58,13 @@ const Login = () => {
     const userId = localStorage.getItem('userId');
     if (userEmail && userName && userId) {
       dispatch(userLogin({ id: userId, email: userEmail, name: userName }));
+    }
+    // Persist admin login from localStorage
+    const adminData = localStorage.getItem('adminData');
+    if (adminData) {
+      try {
+        dispatch(loginSuccess(JSON.parse(adminData)));
+      } catch {}
     }
   }, [mode, loginType, dispatch]);
 
