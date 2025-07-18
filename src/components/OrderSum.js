@@ -9,6 +9,7 @@ const OrderSum = () => {
   const delivery = 15;
   const total = subtotal + delivery;
   const navigate = useNavigate();
+  const isCartEmpty = cart.length === 0;
 
   return (
     <div className="order-summary-box">
@@ -25,7 +26,14 @@ const OrderSum = () => {
         <span>Total</span>
         <span className="order-summary-total-value">${total}</span>
       </div>
-      <button className="order-summary-checkout-btn">Go to Checkout <span className="arrow">→</span></button>
+      <button 
+        className="order-summary-checkout-btn"
+        onClick={() => navigate('/checkout')}
+        disabled={isCartEmpty}
+        style={isCartEmpty ? { background: '#bbb', color: '#fff', cursor: 'not-allowed' } : {}}
+      >
+        Go to Checkout <span className="arrow">→</span>
+      </button>
       <button className="order-summary-continue-btn" onClick={() => navigate('/')}>Continue Shopping</button>
     </div>
   );

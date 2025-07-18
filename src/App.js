@@ -22,6 +22,7 @@ import ProductPage from './pages/ProductPage';
 import { updateAllProductsCategoryNames } from './services/databaseFunctions';
 import CartPage from './pages/CartPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import CheckoutPage from './pages/CheckoutPage';
 import PanelHeader from './components/PanelHeader';
 import MyAccount from './pages/MyAccount';
 const ADMIN_EMAIL = 'admin123@gmail.com';
@@ -45,6 +46,7 @@ function AppContent() {
         <Route path="/party" element={<Party />} />
         <Route path="/gym" element={<Gym />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/my-account" element={<MyAccount />} />
         <Route
           path="/admin/*"
