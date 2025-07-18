@@ -19,6 +19,7 @@ import React from 'react';
 import AdminPanel from './pages/AdminPanel';
 import ProductPage from './pages/ProductPage';
 import { updateAllProductsCategoryNames } from './services/databaseFunctions';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function AppContent() {
   const location = useLocation();
@@ -38,7 +39,14 @@ function AppContent() {
         <Route path="/formal" element={<Formal />} />
         <Route path="/party" element={<Party />} />
         <Route path="/gym" element={<Gym />} />
-        <Route path="/admin/*" element={<AdminPanel />} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute>
+              <AdminPanel />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/product/:slug" element={<ProductPage />} />
       </Routes>
       {!isAdmin && location.pathname !== '/login' && <Footer />}
