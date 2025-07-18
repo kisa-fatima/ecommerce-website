@@ -21,6 +21,7 @@ import ProductPage from './pages/ProductPage';
 import { updateAllProductsCategoryNames } from './services/databaseFunctions';
 import CartPage from './pages/CartPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import MyAccount from './pages/MyAccount';
 
 function AppContent() {
   const location = useLocation();
@@ -41,6 +42,7 @@ function AppContent() {
         <Route path="/party" element={<Party />} />
         <Route path="/gym" element={<Gym />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/my-account" element={<MyAccount />} />
         <Route
           path="/admin/*"
           element={

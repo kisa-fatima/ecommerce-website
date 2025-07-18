@@ -52,7 +52,7 @@ const ProfileDropdown = ({ userName }) => {
         </div>
         {open && (
           <div className="profile-dropdown-menu">
-            <button className="profile-dropdown-item" style={{ cursor: 'pointer' }}>My Account</button>
+            <button className="profile-dropdown-item" style={{ cursor: 'pointer' }} onClick={() => navigate('/my-account')}>My Account</button>
             <button className="profile-dropdown-item" style={{ cursor: 'pointer' }}>My Orders</button>
             <button className="profile-dropdown-item" style={{ cursor: 'pointer' }} onClick={handleLogout}>Logout</button>
           </div>
