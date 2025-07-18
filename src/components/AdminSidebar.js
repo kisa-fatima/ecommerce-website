@@ -3,7 +3,9 @@ import { Layout, Menu } from 'antd';
 import {
   AppstoreOutlined,
   UnorderedListOutlined,
-  BoxPlotOutlined
+  BoxPlotOutlined,
+  UserOutlined,
+  ShoppingCartOutlined
 } from '@ant-design/icons';
 import { NavLink, useLocation } from 'react-router-dom';
 import '../styles/Global.css';
@@ -25,6 +27,16 @@ const menuItems = [
     key: '/admin/categories',
     icon: <BoxPlotOutlined />,
     label: <NavLink to="/admin/categories">Category management</NavLink>,
+  },
+  {
+    key: '/admin/orders',
+    icon: <ShoppingCartOutlined />,
+    label: <NavLink to="/admin/orders">Orders</NavLink>,
+  },
+  {
+    key: '/admin/users',
+    icon: <UserOutlined />,
+    label: <NavLink to="/admin/users">Users</NavLink>,
   }
 ];
 

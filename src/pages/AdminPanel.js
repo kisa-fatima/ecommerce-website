@@ -5,6 +5,8 @@ import AdminSidebar from '../components/AdminSidebar';
 import AdminDashboard from './AdminDashboard';
 import AdminProducts from './AdminProducts';
 import AdminCategories from './AdminCategories';
+import AdminUsers from './AdminUsers';
+import AdminOrders from './AdminOrders';
 // import PanelHeader from '../components/PanelHeader';
 
 const { Content } = Layout;
@@ -31,6 +33,8 @@ const AdminPanel = () => {
               <Route path="products" element={<AdminProducts />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="coupons" element={<CouponsPlaceholder />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="orders" element={<AdminOrders />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Content>
