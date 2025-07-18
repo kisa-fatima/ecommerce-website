@@ -3,12 +3,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/ProductPage.css';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { getCategoryPathById, getCategoryPathIdsById } from '../services/databaseFunctions';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../store/cartSlice';
 
 const isMobile = () => window.innerWidth <= 900;
 
 const ProductPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const product = state?.product;
   const [categoryPath, setCategoryPath] = useState([]);
   const [categoryPathIds, setCategoryPathIds] = useState([]);
@@ -96,6 +99,18 @@ const ProductPage = () => {
     { name: product.name, link: '' }
   ];
 
+  const handleAddToCart = () => {
+    dispatch(addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.thumbnail,
+      size: selectedSize,
+      color: colors[selectedColor],
+      quantity,
+    }));
+  };
+
   return (
     <div className="productpage-container">
       <div className="productpage-gallery">
@@ -171,7 +186,7 @@ const ProductPage = () => {
               <span>{quantity}</span>
               <button onClick={() => setQuantity(q => q + 1)}>+</button>
             </div>
-            <button className="add-to-cart-btn">Add to Cart</button>
+            <button className="add-to-cart-btn" onClick={handleAddToCart}>Add to Cart</button>
           </div>
         </div>
       </div>

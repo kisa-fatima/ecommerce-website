@@ -1,60 +1,39 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CartCards from './CartCards';
 import '../styles/Cart.css';
-
-const initialCart = [
-  {
-    id: 1,
-    name: 'Gradient Graphic T-shirt',
-    size: 'Large',
-    color: 'White',
-    price: 145,
-    image: require('../assets/images/casual1.jpg'),
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: 'Checkered Shirt',
-    size: 'Medium',
-    color: 'Red',
-    price: 180,
-    image: require('../assets/images/casual2.jpg'),
-    quantity: 1,
-  },
-  {
-    id: 3,
-    name: 'Skinny Fit Jeans',
-    size: 'Large',
-    color: 'Blue',
-    price: 240,
-    image: require('../assets/images/casual.jpg'),
-    quantity: 1,
-  },
-];
+import { useSelector, useDispatch } from 'react-redux';
+import { updateQuantity, removeFromCart } from '../store/cartSlice';
 
 const Cart = () => {
-  const [cart, setCart] = useState(initialCart);
+  const cart = useSelector(state => state.cart.items);
+  const dispatch = useDispatch();
 
-  const handleQtyChange = (id, delta) => {
-    setCart(prevCart =>
-      prevCart.map(item =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    );
+  const handleQtyChange = (id, delta, currentQty) => {
+    const newQty = currentQty + delta;
+    if (newQty > 0) {
+      dispatch(updateQuantity({ id, quantity: newQty }));
+    }
+  };
+
+  const handleRemove = (id) => {
+    dispatch(removeFromCart(id));
   };
 
   return (
     <div className="cart-box">
       <div className="cart-cards-list">
-        {cart.map(item => (
-          <CartCards
-            key={item.id}
-            item={item}
-            onQtyChange={delta => handleQtyChange(item.id, delta)}
-          />
-        ))}
+        {cart.length === 0 ? (
+          <div style={{ padding: 40, textAlign: 'center', color: '#888' }}>Your cart is empty.</div>
+        ) : (
+          cart.map(item => (
+            <CartCards
+              key={item.id + (item.size || '') + (item.color || '')}
+              item={item}
+              onQtyChange={delta => handleQtyChange(item.id, delta, item.quantity)}
+              onRemove={() => handleRemove(item.id)}
+            />
+          ))
+        )}
       </div>
     </div>
   );
