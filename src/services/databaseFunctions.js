@@ -270,6 +270,30 @@ export async function fetchUserByEmail(email) {
   return null;
 }
 
+/**
+ * Get the total number of items ordered (sum of soldCount for all products)
+ */
+export async function getTotalItemsOrdered() {
+  const productsCol = collection(db, 'products');
+  const productSnapshot = await getDocs(productsCol);
+  return productSnapshot.docs.reduce((sum, doc) => {
+    const data = doc.data();
+    return sum + (data.soldCount || 0);
+  }, 0);
+}
+
+/**
+ * Get the total revenue (sum of soldCount * price for all products)
+ */
+export async function getTotalRevenue() {
+  const productsCol = collection(db, 'products');
+  const productSnapshot = await getDocs(productsCol);
+  return productSnapshot.docs.reduce((sum, doc) => {
+    const data = doc.data();
+    return sum + ((data.soldCount || 0) * (data.price || 0));
+  }, 0);
+}
+
 // Delete a product by ID
 export async function deleteProductById(productId) {
   const docRef = doc(db, 'products', productId);
