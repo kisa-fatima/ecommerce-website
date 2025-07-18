@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import db from '../firebase';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import Loader from '../components/Loader';
+import AccountForm from '../components/AccountForm';
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
@@ -73,42 +74,12 @@ const MyAccount = () => {
   return (
     <div style={{ maxWidth: 400, margin: '40px auto', background: '#f7f7f7', borderRadius: 12, boxShadow: '0 2px 12px #eee', padding: 32 }}>
       <h2 style={{ marginBottom: 24, textAlign: 'center', fontWeight: 'bold', color: '#111' }}>My Account</h2>
-      <Formik
+      <AccountForm
         initialValues={initialValues}
-        enableReinitialize
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
-      >
-        {({ isSubmitting, dirty }) => (
-          <Form>
-            {/* Name */}
-            <div style={{ marginBottom: 18 }}>
-              <Field name="name" placeholder="Name" style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #ccc', fontSize: 16 }} />
-              <ErrorMessage name="name" component="div" style={{ color: 'red', fontSize: 13 }} />
-            </div>
-            {/* Address */}
-            <div style={{ marginBottom: 18 }}>
-              <Field name="address" placeholder="Address" style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #ccc', fontSize: 16 }} />
-              <ErrorMessage name="address" component="div" style={{ color: 'red', fontSize: 13 }} />
-            </div>
-            {/* Phone number */}
-            <div style={{ marginBottom: 18 }}>
-              <Field name="phone" placeholder="Phone number" style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #ccc', fontSize: 16 }} />
-              <ErrorMessage name="phone" component="div" style={{ color: 'red', fontSize: 13 }} />
-            </div>
-            {/* Email (read-only) */}
-            <div style={{ marginBottom: 18 }}>
-              <Field name="email" placeholder="Email" className="form-input" readOnly style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #ccc', fontSize: 16, background: '#eee' }} />
-              <ErrorMessage name="email" component="div" style={{ color: 'red', fontSize: 13 }} />
-            </div>
-            <button type="submit" className="login-btn-main" disabled={isSubmitting || !dirty} style={{ width: '160px', margin: '18px auto 0 auto', display: 'block', padding: '10px 0', fontSize: '1rem' }}>
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
-            </button>
-            {status && status.success && <div style={{ color: '#111', fontSize: 15, marginTop: 12, textAlign: 'center', fontWeight: 500 }}>{status.success}</div>}
-            {status && status.error && <div style={{ color: 'red', fontSize: 15, marginTop: 12 }}>{status.error}</div>}
-          </Form>
-        )}
-      </Formik>
+        status={status}
+      />
     </div>
   );
 };
