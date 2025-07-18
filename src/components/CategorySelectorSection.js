@@ -18,8 +18,8 @@ const CategorySelectorSection = ({ styleName }) => {
       setLoading(true);
       const allProducts = await getAllProducts();
       const allCategories = await getAllCategoriesFlat();
-      // Find the style category ID by name (case-insensitive)
-      const styleCat = allCategories.find(cat => cat.name.toLowerCase() === styleName.toLowerCase());
+      // Find the style category ID by name (case-insensitive, force lowercase)
+      const styleCat = allCategories.find(cat => cat.name.toLowerCase() === styleName.toLowerCase().trim());
       if (!styleCat) {
         setProducts([]);
         setProductCount(0);

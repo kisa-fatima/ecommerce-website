@@ -104,29 +104,29 @@ const DashboardOverviewCard = () => {
   const pieColors = ['#111', '#bbb'];
 
   return (
+  <div style={{
+    background: '#f6f7fa',
+    borderRadius: 22,
+    boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
+    border: '1px solid #ececec',
+    padding: '32px 32px',
+    marginBottom: 24,
+    marginTop: 8,
+    minWidth: 0
+  }}>
     <div style={{
-      background: '#f6f7fa',
-      borderRadius: 22,
-      boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
-      border: '1px solid #ececec',
-      padding: '32px 32px',
-      marginBottom: 24,
-      marginTop: 8,
-      minWidth: 0
-    }}>
-      <div style={{
-        minWidth: 220,
+      minWidth: 220,
         minHeight: 80,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
         marginBottom: 24,
-        borderRadius: 18
-      }}>
-        <div style={{ fontSize: 15, color: '#888', marginBottom: 8 }}>Since joined</div>
-        <div style={{ fontWeight: 700, fontSize: 22, color: '#222', marginBottom: 8 }}>Performance Overview</div>
-      </div>
+      borderRadius: 18
+    }}>
+      <div style={{ fontSize: 15, color: '#888', marginBottom: 8 }}>Since joined</div>
+      <div style={{ fontWeight: 700, fontSize: 22, color: '#222', marginBottom: 8 }}>Performance Overview</div>
+    </div>
       <div
         style={{
           display: 'grid',
@@ -173,8 +173,8 @@ const DashboardOverviewCard = () => {
           </ResponsiveContainer>
         </div>
       </div>
-    </div>
-  );
+  </div>
+);
 };
 
-export default DashboardOverviewCard;
+export default DashboardOverviewCard; 
