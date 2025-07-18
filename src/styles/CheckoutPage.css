@@ -55,6 +55,11 @@
   margin-bottom: 24px;
 }
 
+.checkout-form-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
 @media (max-width: 700px) {
   .checkout-page-container {
     padding: 12px 0 12px 0;
@@ -88,12 +93,19 @@
   }
   .checkout-form, .order-summary-box {
     border-radius: 12px;
-    padding: 16px 4px 12px 4px;
+    padding: 16px 12px 12px 12px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.03);
     width: 100%;
-    max-width: 420px;
+    max-width: 100vw;
     margin-left: auto;
     margin-right: auto;
+  }
+  .checkout-form-wrapper {
+    max-width: 100vw;
+    width: 100vw;
+    margin: 0;
+    padding-left: 12px;
+    padding-right: 12px;
   }
   .order-summary-box {
     margin-top: 16px;

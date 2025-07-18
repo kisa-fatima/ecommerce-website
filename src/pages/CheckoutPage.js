@@ -50,14 +50,14 @@ const CheckoutPage = () => {
 
   const handlePlaceOrder = async (values, { setSubmitting, resetForm }) => {
     try {
-      if (!user) {
+    if (!user) {
         toast.error('You must be logged in to place an order.');
         return;
       }
       if (!cart.length) {
         toast.error('Your cart is empty.');
-        return;
-      }
+      return;
+    }
       // Prepare order data
       const orderData = {
         userID: user.uid || user.id,
@@ -112,7 +112,7 @@ const CheckoutPage = () => {
       <div className="checkout-page-inner">
         <Row gutter={32} justify="center" align="top" style={{width: '100%'}}>
           <Col xs={24} md={15} lg={15} xl={15} className="checkout-page-left" style={{paddingTop: 0}}>
-            <div style={{ maxWidth: 700, margin: '0 auto' }}>
+            <div className="checkout-form-wrapper">
               <h1 className="checkout-title" style={{ marginLeft: 0, paddingLeft: 0, textAlign: 'left' }}>Checkout</h1>
               <Formik
                 initialValues={initialValues}
@@ -123,9 +123,6 @@ const CheckoutPage = () => {
                 {({ values, isValid, dirty, handleSubmit, isSubmitting }) => (
                   <>
                     <AccountForm
-                      initialValues={initialValues}
-                      validationSchema={validationSchema}
-                      onSubmit={handlePlaceOrder}
                       status={status}
                       showSubmit={false}
                     />
@@ -133,7 +130,7 @@ const CheckoutPage = () => {
                       type="button"
                       className="order-summary-checkout-btn"
                       style={{ width: '100%', marginTop: 8 }}
-                      disabled={!(isValid && dirty) || isSubmitting}
+                      disabled={isSubmitting}
                       onClick={handleSubmit}
                     >
                       {isSubmitting ? (
