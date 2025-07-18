@@ -5,6 +5,7 @@ import db from '../firebase';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import Loader from '../components/Loader';
 import AccountForm from '../components/AccountForm';
+import { fetchUserByEmail } from '../services/databaseFunctions';
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
@@ -21,16 +22,13 @@ const MyAccount = () => {
   const userEmail = localStorage.getItem('userEmail');
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const getUser = async () => {
       setLoading(true);
       try {
-        const usersRef = collection(db, 'users');
-        const q = query(usersRef, where('email', '==', userEmail));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          const docSnap = querySnapshot.docs[0];
-          setUserDocId(docSnap.id);
-          const data = docSnap.data();
+        const result = await fetchUserByEmail(userEmail);
+        if (result) {
+          setUserDocId(result.id);
+          const data = result.data;
           setInitialValues({
             name: data.name || '',
             address: data.address || '',
@@ -46,7 +44,7 @@ const MyAccount = () => {
         setLoading(false);
       }
     };
-    if (userEmail) fetchUser();
+    if (userEmail) getUser();
     else {
       setStatus({ error: 'Not logged in.' });
       setLoading(false);

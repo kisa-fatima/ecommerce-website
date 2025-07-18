@@ -1,31 +1,145 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/CheckoutPage.css';
 import OrderSum from '../components/OrderSum';
 import { Row, Col } from 'antd';
 import AccountForm from '../components/AccountForm';
+import { fetchUserByEmail } from '../services/databaseFunctions';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
+import { useSelector, useDispatch } from 'react-redux';
+import { clearCart } from '../store/cartSlice';
+import db, { auth } from '../firebase';
+import { collection, addDoc, updateDoc, doc, increment } from 'firebase/firestore';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
+
+const validationSchema = Yup.object({
+  name: Yup.string().required('Name is required'),
+  address: Yup.string().required('Address is required'),
+  phone: Yup.string().required('Phone number is required'),
+  email: Yup.string().email('Invalid email'),
+});
+
+const status = null;
 
 const CheckoutPage = () => {
-  // Placeholder props for AccountForm
-  const initialValues = { name: '', address: '', phone: '', email: '' };
-  const validationSchema = undefined; // Replace with real schema if needed
-  const onSubmit = () => {};
-  const status = null;
+  const [initialValues, setInitialValues] = useState({ name: '', address: '', phone: '', email: '' });
+  const cart = useSelector(state => state.cart.items);
+  const user = useSelector(state => state.user.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userEmail = localStorage.getItem('userEmail');
+    const getUser = async () => {
+      if (!userEmail) return;
+      const result = await fetchUserByEmail(userEmail);
+      if (result) {
+        const data = result.data;
+        setInitialValues({
+          name: data.name || '',
+          address: data.address || '',
+          phone: data.phone || '',
+          email: data.email || '',
+        });
+      }
+    };
+    getUser();
+  }, []);
+
+  const handlePlaceOrder = async (values, { setSubmitting, resetForm }) => {
+    try {
+      if (!user) {
+        toast.error('You must be logged in to place an order.');
+        return;
+      }
+      if (!cart.length) {
+        toast.error('Your cart is empty.');
+        return;
+      }
+      // Prepare order data
+      const orderData = {
+        userID: user.uid || user.id,
+        products: cart.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+        totalAmount: cart.reduce((sum, item) => sum + item.price * item.quantity, 0) + 15, // subtotal + delivery
+        paymentMethod: 'COD',
+        status: 'pending',
+        createdAt: new Date(),
+        shippingDetails: {
+          name: values.name,
+          address: values.address,
+          phone: values.phone,
+          email: values.email,
+        },
+      };
+      // Add order to Firestore
+      await addDoc(collection(db, 'orders'), orderData);
+      // Update each product's soldCount and quantity
+      for (const item of cart) {
+        const productRef = doc(db, 'products', item.id);
+        await updateDoc(productRef, {
+          soldCount: increment(item.quantity),
+          quantity: increment(-item.quantity),
+        });
+      }
+      dispatch(clearCart());
+      toast.success('Order placed successfully!');
+      resetForm();
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (err) {
+      toast.error('Failed to place order. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="checkout-page-container">
+      <ToastContainer position="top-center" autoClose={1500} />
       <div className="checkout-page-inner">
-        <h1 className="checkout-title">Checkout</h1>
         <Row gutter={32} justify="center" align="top" style={{width: '100%'}}>
-          <Col xs={24} md={15} lg={15} xl={15} className="checkout-page-left">
-            <AccountForm
-              initialValues={initialValues}
-              validationSchema={validationSchema}
-              onSubmit={onSubmit}
-              status={status}
-            />
+          <Col xs={24} md={15} lg={15} xl={15} className="checkout-page-left" style={{paddingTop: 0}}>
+            <div style={{ maxWidth: 700, margin: '0 auto' }}>
+              <h1 className="checkout-title" style={{ marginLeft: 0, paddingLeft: 0, textAlign: 'left' }}>Checkout</h1>
+              <Formik
+                initialValues={initialValues}
+                enableReinitialize
+                validationSchema={validationSchema}
+                onSubmit={handlePlaceOrder}
+              >
+                {({ values, isValid, dirty, handleSubmit, isSubmitting }) => (
+                  <>
+                    <AccountForm
+                      initialValues={initialValues}
+                      validationSchema={validationSchema}
+                      onSubmit={handlePlaceOrder}
+                      status={status}
+                      showSubmit={false}
+                    />
+                    <button
+                      type="button"
+                      className="order-summary-checkout-btn"
+                      style={{ width: '100%', marginTop: 8 }}
+                      disabled={!(isValid && dirty) || isSubmitting}
+                      onClick={handleSubmit}
+                    >
+                      Place Order <span className="arrow">→</span>
+                    </button>
+                  </>
+                )}
+              </Formik>
+            </div>
           </Col>
           <Col xs={24} md={9} lg={7} xl={6} className="checkout-page-right">
-            <OrderSum />
+            <OrderSum showCheckoutBtn={false} />
           </Col>
         </Row>
       </div>
