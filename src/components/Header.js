@@ -4,12 +4,15 @@ import { FaShoppingCart, FaUser, FaSearch, FaBars } from 'react-icons/fa';
 import { Drawer, Menu } from 'antd';
 import '../styles/Global.css';
 import ProfileDropdown from './ProfileDropdown';
+import { useSelector } from 'react-redux';
 
 function Header() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   // Check if user is logged in by looking for userName in localStorage
   const userName = localStorage.getItem('userName');
   const isLoggedIn = !!userName;
+  const cart = useSelector(state => state.cart.items);
+  const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
 
   const showDrawer = () => setDrawerVisible(true);
   const closeDrawer = () => setDrawerVisible(false);
@@ -41,7 +44,28 @@ function Header() {
       {/* Icons on the right */}
       <div className="header__icons">
         <span className="header__icon header__icon--search"><FaSearch /></span>
-        <Link to="/cart" className="header__icon" title="Cart"><FaShoppingCart color="#111" /></Link>
+        <Link to="/cart" className="header__icon" title="Cart" style={{ position: 'relative' }}>
+          <FaShoppingCart color="#111" />
+          {cartCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: -6,
+              right: -8,
+              background: '#ff3b3b',
+              color: '#fff',
+              borderRadius: '50%',
+              fontSize: 12,
+              minWidth: 18,
+              height: 18,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700,
+              padding: '0 5px',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.12)'
+            }}>{cartCount}</span>
+          )}
+        </Link>
         {isLoggedIn ? (
           <ProfileDropdown userName={userName} />
         ) : (
