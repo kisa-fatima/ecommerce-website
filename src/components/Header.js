@@ -3,9 +3,11 @@ import { NavLink, Link } from 'react-router-dom';
 import { FaShoppingCart, FaUser, FaSearch, FaBars } from 'react-icons/fa';
 import { Drawer, Menu } from 'antd';
 import '../styles/Global.css';
+import ProfileDropdown from './ProfileDropdown';
 
 function Header() {
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const isLoggedIn = true; // Simulate logged-in state
 
   const showDrawer = () => setDrawerVisible(true);
   const closeDrawer = () => setDrawerVisible(false);
@@ -37,7 +39,7 @@ function Header() {
       {/* Icons on the right */}
       <div className="header__icons">
         <span className="header__icon header__icon--search"><FaSearch /></span>
-        <span className="header__icon" title="Cart"><FaShoppingCart /></span>
+        <Link to="/cart" className="header__icon" title="Cart"><FaShoppingCart color="#111" /></Link>
         <Link to="/login" className="header__icon" title="Profile"><FaUser color="#111" /></Link>
       </div>
       {/* Drawer for mobile menu */}
