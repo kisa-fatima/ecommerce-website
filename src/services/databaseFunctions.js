@@ -1,5 +1,5 @@
 import db from '../firebase';
-import { collection, getDocs, doc, updateDoc, addDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, addDoc, deleteDoc, query, where } from 'firebase/firestore';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -250,6 +250,24 @@ export async function deleteCategoryFromDatabase(categoryId) {
     console.error('Error deleting category:', err);
     throw err;
   }
+}
+
+/**
+ * Fetch a user document by email from the 'users' collection.
+ * @param {string} email - The user's email address.
+ * @returns {Promise<{id: string, data: object} | null>} The user document and data, or null if not found.
+ */
+export async function fetchUserByEmail(email) {
+  if (!email) return null;
+  const usersRef = collection(db, 'users');
+  // Use query to match email
+  const q = query(usersRef, where('email', '==', email));
+  const querySnapshot = await getDocs(q);
+  if (!querySnapshot.empty) {
+    const docSnap = querySnapshot.docs[0];
+    return { id: docSnap.id, data: docSnap.data() };
+  }
+  return null;
 }
 
 // Delete a product by ID

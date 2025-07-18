@@ -1,26 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import db from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import { fetchUserByEmail } from '../services/databaseFunctions';
 
 const MyOrders = () => {
   const [user, setUser] = useState(null);
   const userEmail = localStorage.getItem('userEmail');
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const getUser = async () => {
       if (!userEmail) return;
-      const usersRef = collection(db, 'users');
-      const querySnapshot = await getDocs(usersRef);
-      let foundUser = null;
-      querySnapshot.forEach(docSnap => {
-        const userData = docSnap.data();
-        if (userData.email && userData.email.trim().toLowerCase() === userEmail.trim().toLowerCase()) {
-          foundUser = userData;
-        }
-      });
-      setUser(foundUser);
+      const result = await fetchUserByEmail(userEmail);
+      if (result) {
+        setUser(result.data);
+      } else {
+        setUser(null);
+      }
     };
-    fetchUser();
+    getUser();
   }, [userEmail]);
 
   if (!user) {

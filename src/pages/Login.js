@@ -6,6 +6,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik'; // Import Formik
 import * as Yup from 'yup'; // Import Yup
 import { useDispatch, useSelector } from 'react-redux';
 import { loginRequest } from '../store/authSlice';
+import { userLogin } from '../store/userSlice';
 import db from '../firebase';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 
@@ -51,7 +52,14 @@ const Login = () => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
-  }, [mode, loginType]);
+    // Persist user login from localStorage
+    const userEmail = localStorage.getItem('userEmail');
+    const userName = localStorage.getItem('userName');
+    const userId = localStorage.getItem('userId');
+    if (userEmail && userName && userId) {
+      dispatch(userLogin({ id: userId, email: userEmail, name: userName }));
+    }
+  }, [mode, loginType, dispatch]);
 
   // Redirect to admin dashboard on successful admin login
   useEffect(() => {
@@ -223,6 +231,7 @@ const Login = () => {
                 const querySnapshot = await getDocs(usersRef); // fetch all users
                 console.log('Attempting login for email:', inputEmail);
                 let found = false;
+                let foundUserId = '';
                 let foundUserName = '';
                 querySnapshot.forEach(docSnap => {
                   const userData = docSnap.data();
@@ -234,12 +243,15 @@ const Login = () => {
                     userData.password.trim() === inputPassword
                   ) {
                     found = true;
+                    foundUserId = docSnap.id;
                     foundUserName = userData.name || '';
                   }
                 });
                 if (found) {
                   localStorage.setItem('userName', foundUserName);
                   localStorage.setItem('userEmail', inputEmail);
+                  localStorage.setItem('userId', foundUserId);
+                  dispatch(userLogin({ id: foundUserId, email: inputEmail, name: foundUserName }));
                   setStatus({ success: 'Login successful! Redirecting...' });
                   setTimeout(() => {
                     navigate('/');
