@@ -6,6 +6,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik'; // Import Formik
 import * as Yup from 'yup'; // Import Yup
 import { useDispatch, useSelector } from 'react-redux';
 import { loginRequest } from '../store/authSlice';
+import db from '../firebase';
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -135,9 +137,30 @@ const Login = () => {
             key="signup"
             initialValues={{ name: '', email: '', password: '' }}
             validationSchema={signupValidationSchema}
-            onSubmit={values => { /* handle signup */ }}
+            onSubmit={async (values, { setSubmitting, resetForm, setStatus }) => {
+              try {
+                // Add user to Firestore 'users' collection
+                await addDoc(collection(db, 'users'), {
+                  name: values.name,
+                  email: values.email,
+                  password: values.password, // WARNING: Do not store plain text passwords in production
+                  orders: [],
+                  phone: '',
+                  address: ''
+                });
+                setStatus({ success: 'Signup successful! You can now log in.' });
+                resetForm();
+                setTimeout(() => {
+                  navigate('/login');
+                }, 1500);
+              } catch (error) {
+                setStatus({ error: 'Signup failed. Please try again.' });
+              } finally {
+                setSubmitting(false);
+              }
+            }}
           >
-            {() => (
+            {({ status }) => (
               <Form className="signup-form" autoComplete="off">
                 <div className="login-input-group">
                   <span className="login-icon"><FaUser /></span>
@@ -179,6 +202,8 @@ const Login = () => {
                 </div>
                 <ErrorMessage name="password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <button type="submit" className="login-btn-main">SIGNUP</button>
+                {status && status.success && <div style={{ color: 'green', fontSize: '0.9rem', marginTop: 8 }}>{status.success}</div>}
+                {status && status.error && <div style={{ color: 'red', fontSize: '0.9rem', marginTop: 8 }}>{status.error}</div>}
                 <div className="login-signup-message">
                   Already have an account? <button type="button" className="login-signup-link" onClick={handleLoginClick}>Login!</button>
                 </div>
@@ -190,9 +215,46 @@ const Login = () => {
             key="user-login"
             initialValues={{ email: '', password: '' }}
             validationSchema={loginValidationSchema}
-            onSubmit={values => { /* handle user login */ }}
+            onSubmit={async (values, { setSubmitting, setStatus, resetForm }) => {
+              try {
+                const inputEmail = values.email.trim().toLowerCase();
+                const inputPassword = values.password.trim();
+                const usersRef = collection(db, 'users');
+                const querySnapshot = await getDocs(usersRef); // fetch all users
+                console.log('Attempting login for email:', inputEmail);
+                let found = false;
+                let foundUserName = '';
+                querySnapshot.forEach(docSnap => {
+                  const userData = docSnap.data();
+                  console.log('Checking user:', userData.email, userData.password);
+                  if (
+                    userData.email &&
+                    userData.email.trim().toLowerCase() === inputEmail &&
+                    userData.password &&
+                    userData.password.trim() === inputPassword
+                  ) {
+                    found = true;
+                    foundUserName = userData.name || '';
+                  }
+                });
+                if (found) {
+                  localStorage.setItem('userName', foundUserName);
+                  setStatus({ success: 'Login successful! Redirecting...' });
+                  setTimeout(() => {
+                    navigate('/');
+                  }, 1200);
+                } else {
+                  setStatus({ error: 'Invalid email or password.' });
+                }
+              } catch (error) {
+                console.error('Login error:', error);
+                setStatus({ error: 'Login failed. Please try again.' });
+              } finally {
+                setSubmitting(false);
+              }
+            }}
           >
-            {() => (
+            {({ status }) => (
               <Form className="login-form" autoComplete="off">
                 <div className="login-input-group">
                   <span className="login-icon"><FaUser /></span>
@@ -242,6 +304,8 @@ const Login = () => {
                   <a href="#" className="login-forgot">Forgot Password?</a>
                 </div>
                 <button type="submit" className="login-btn-main">LOGIN</button>
+                {status && status.success && <div style={{ color: 'green', fontSize: '0.9rem', marginTop: 8 }}>{status.success}</div>}
+                {status && status.error && <div style={{ color: 'red', fontSize: '0.9rem', marginTop: 8 }}>{status.error}</div>}
                 <div className="login-signup-message">
                   Don't have an account? <button type="button" className="login-signup-link" onClick={handleSignupClick}>Signup!</button>
                 </div>
