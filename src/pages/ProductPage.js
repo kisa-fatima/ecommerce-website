@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import '../styles/ProductPage.css';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { getCategoryPathById, getCategoryPathIdsById } from '../services/databaseFunctions';
+import { getCategoryPathById, getCategoryPathIdsById, getAllProducts } from '../services/databaseFunctions';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/cartSlice';
 import { toast } from 'react-toastify';
@@ -12,25 +12,45 @@ const isMobile = () => window.innerWidth <= 900;
 
 const ProductPage = () => {
   const { state } = useLocation();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const product = state?.product;
+  const [product, setProduct] = useState(state?.product || null);
   const [categoryPath, setCategoryPath] = useState([]);
   const [categoryPathIds, setCategoryPathIds] = useState([]);
+  const [loading, setLoading] = useState(!state?.product);
 
-  // Always show three images: thumbnail, image1, image2
-  const galleryImages = [product?.thumbnail, product?.image1, product?.image2];
+  // State for gallery and options
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState('Large');
   const [quantity, setQuantity] = useState(1);
   const [mobile, setMobile] = useState(isMobile());
+  const galleryImages = [product?.thumbnail, product?.image1, product?.image2];
+
+  // Reset product state when slug changes
+  React.useEffect(() => {
+    setProduct(null);
+    setLoading(true);
+    setSelectedImgIdx(0);
+    setSelectedColor(0);
+    setSelectedSize('Large');
+    setQuantity(1);
+  }, [slug]);
 
   React.useEffect(() => {
-    const handleResize = () => setMobile(isMobile());
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    async function fetchProduct() {
+      if (!product && slug) {
+        setLoading(true);
+        const all = await getAllProducts();
+        // Try to match by slug, fallback to id
+        const found = all.find(p => (p.slug === slug) || (p.id === slug));
+        setProduct(found || null);
+        setLoading(false);
+      }
+    }
+    fetchProduct();
+  }, [slug, product]);
 
   React.useEffect(() => {
     async function fetchCategoryPath() {
@@ -44,13 +64,16 @@ const ProductPage = () => {
         setCategoryPathIds([]);
       }
     }
-    fetchCategoryPath();
+    if (product) fetchCategoryPath();
   }, [product]);
 
   // Placeholder colors and sizes
   const colors = ['#4B473A', '#2B3A3A', '#2B3A4B'];
   const sizes = ['Small', 'Medium', 'Large', 'X-Large'];
 
+  if (loading) {
+    return <div style={{ padding: 40 }}>Loading product...</div>;
+  }
   if (!product) {
     return <div style={{ padding: 40 }}>Product not found. <button onClick={() => navigate(-1)}>Go Back</button></div>;
   }
