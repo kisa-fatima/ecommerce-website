@@ -1,0 +1,21 @@
+.cart-box {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 32px 24px 24px 24px;
+  margin-bottom: 24px;
+}
+
+.cart-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 24px;
+  font-family: 'Boldonse', Arial, sans-serif;
+  letter-spacing: -2px;
+}
+
+.cart-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+} 
