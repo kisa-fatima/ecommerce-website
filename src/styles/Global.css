@@ -827,9 +827,14 @@
   text-decoration: underline;
   cursor: pointer;
   margin-left: 4px;
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
 }
 .login-signup-link:hover {
   color: #1e5375;
+  background: none !important;
 }
 
 .login-form-container {
