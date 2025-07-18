@@ -28,7 +28,7 @@ const ProductCard = ({ product }) => {
   if (!state) return null;
 
   const handleClick = () => {
-    navigate(`/product/${slugify(name)}`, { state: { product } });
+    navigate(`/product/${product.id}`, { state: { product } });
   };
 
   const discountedPrice = discountFlag ? calculateDiscountedPrice(price, discountPercentage) : price;
