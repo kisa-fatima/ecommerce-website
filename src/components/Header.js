@@ -39,7 +39,7 @@ function Header() {
       {/* Icons on the right */}
       <div className="header__icons">
         <span className="header__icon header__icon--search"><FaSearch /></span>
-        <span className="header__icon" title="Cart"><FaShoppingCart /></span>
+        <Link to="/cart" className="header__icon" title="Cart"><FaShoppingCart color="#111" /></Link>
         <Link to="/login" className="header__icon" title="Profile"><FaUser color="#111" /></Link>
       </div>
       {/* Drawer for mobile menu */}
