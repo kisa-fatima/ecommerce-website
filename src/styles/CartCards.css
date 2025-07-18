@@ -87,3 +87,47 @@
   cursor: pointer;
   margin-top: 8px;
 } 
+
+@media (max-width: 700px) {
+  .cart-card {
+    padding: 10px 6px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+  }
+  .cart-card-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    margin-right: 12px;
+  }
+  .cart-card-title {
+    font-size: 1rem;
+  }
+  .cart-card-meta {
+    font-size: 0.85rem;
+  }
+  .cart-card-price {
+    font-size: 1rem;
+    margin-top: 4px;
+  }
+  .cart-card-actions {
+    gap: 8px;
+    margin-left: 10px;
+  }
+  .cart-card-qty {
+    padding: 2px 6px;
+    gap: 6px;
+  }
+  .qty-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+  }
+  .qty-value {
+    font-size: 1rem;
+    min-width: 12px;
+  }
+  .cart-card-delete {
+    margin-top: 4px;
+  }
+} 

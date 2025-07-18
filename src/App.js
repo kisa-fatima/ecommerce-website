@@ -23,7 +23,7 @@ import { updateAllProductsCategoryNames } from './services/databaseFunctions';
 import CartPage from './pages/CartPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import PanelHeader from './components/PanelHeader';
-
+import MyAccount from './pages/MyAccount';
 const ADMIN_EMAIL = 'admin123@gmail.com';
 
 function AppContent() {
@@ -45,8 +45,9 @@ function AppContent() {
         <Route path="/party" element={<Party />} />
         <Route path="/gym" element={<Gym />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/my-account" element={<MyAccount />} />
         <Route
-          path="/admin-dashboard/*"
+          path="/admin/*"
           element={
             <ProtectedRoute>
               <AdminPanel />
