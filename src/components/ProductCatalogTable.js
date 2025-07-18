@@ -17,7 +17,7 @@ const CatalogStatus = ({ status }) => {
 };
 
 const StockStatus = ({ status }) => (
-  <span style={{ color: status === 'In stock' ? '#52c41a' : '#888' }}>{status}</span>
+  <span style={{ color: status === 'In stock' ? '#52c41a' : status === 'Out of stock' ? '#ff3b3b' : '#888' }}>{status}</span>
 );
 
 const StateTag = ({ state }) => (
@@ -126,15 +126,9 @@ const columns = (onView, onEdit, onDelete) => [
   },
   {
     title: 'Orders',
-    dataIndex: 'ordered',
-    sorter: (a, b) => a.ordered - b.ordered,
+    dataIndex: 'soldCount',
+    sorter: (a, b) => (a.soldCount || 0) - (b.soldCount || 0),
     width: 70,
-  },
-  {
-    title: <span>Revenue<br/></span>,
-    dataIndex: 'revenue',
-    sorter: (a, b) => a.revenue - b.revenue,
-    width: 80,
   },
   {
     title: 'State',
@@ -202,8 +196,7 @@ const ProductCatalogTable = () => {
         typeName,
         type: product.type,
         section: product.section,
-        ordered: product.ordered || 0,
-        revenue: product.revenue || 0,
+        soldCount: product.soldCount || 0,
         catalog: product.catalog || 'Active',
         stock: product.inStock === true ? 'In stock' : 'Out of stock',
         inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
@@ -261,8 +254,7 @@ const ProductCatalogTable = () => {
         typeName,
         type: product.type,
         section: product.section,
-        ordered: product.ordered || 0,
-        revenue: product.revenue || 0,
+        soldCount: product.soldCount || 0,
         catalog: product.catalog || 'Active',
         stock: product.inStock === true ? 'In stock' : 'Out of stock',
         inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
@@ -313,8 +305,7 @@ const ProductCatalogTable = () => {
           typeName,
           type: product.type,
           section: product.section,
-          ordered: product.ordered || 0,
-          revenue: product.revenue || 0,
+          soldCount: product.soldCount || 0,
           catalog: product.catalog || 'Active',
           stock: product.inStock === true ? 'In stock' : 'Out of stock',
           inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
@@ -361,8 +352,7 @@ const ProductCatalogTable = () => {
           typeName,
           type: product.type,
           section: product.section,
-          ordered: product.ordered || 0,
-          revenue: product.revenue || 0,
+          soldCount: product.soldCount || 0,
           catalog: product.catalog || 'Active',
           stock: product.inStock === true ? 'In stock' : 'Out of stock',
           inStock: typeof product.inStock === 'boolean' ? product.inStock : false,
