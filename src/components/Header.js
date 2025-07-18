@@ -3,9 +3,13 @@ import { NavLink, Link } from 'react-router-dom';
 import { FaShoppingCart, FaUser, FaSearch, FaBars } from 'react-icons/fa';
 import { Drawer, Menu } from 'antd';
 import '../styles/Global.css';
+import ProfileDropdown from './ProfileDropdown';
 
 function Header() {
   const [drawerVisible, setDrawerVisible] = useState(false);
+  // Check if user is logged in by looking for userName in localStorage
+  const userName = localStorage.getItem('userName');
+  const isLoggedIn = !!userName;
 
   const showDrawer = () => setDrawerVisible(true);
   const closeDrawer = () => setDrawerVisible(false);
@@ -38,7 +42,11 @@ function Header() {
       <div className="header__icons">
         <span className="header__icon header__icon--search"><FaSearch /></span>
         <Link to="/cart" className="header__icon" title="Cart"><FaShoppingCart color="#111" /></Link>
-        <Link to="/login" className="header__icon" title="Profile"><FaUser color="#111" /></Link>
+        {isLoggedIn ? (
+          <ProfileDropdown userName={userName} />
+        ) : (
+          <Link to="/login" className="header__icon" title="Profile"><FaUser color="#111" /></Link>
+        )}
       </div>
       {/* Drawer for mobile menu */}
       <Drawer
