@@ -72,12 +72,14 @@ const MyAccount = () => {
   return (
     <div style={{ maxWidth: 400, margin: '40px auto', background: '#f7f7f7', borderRadius: 12, boxShadow: '0 2px 12px #eee', padding: 32 }}>
       <h2 style={{ marginBottom: 24, textAlign: 'center', fontWeight: 'bold', color: '#111' }}>My Account</h2>
-      <AccountForm
+      <Formik
         initialValues={initialValues}
+        enableReinitialize
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
-        status={status}
-      />
+      >
+        <AccountForm status={status} showSubmit={true} />
+      </Formik>
     </div>
   );
 };
