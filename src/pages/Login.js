@@ -4,6 +4,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../styles/Global.css';
 import { Formik, Form, Field, ErrorMessage } from 'formik'; // Import Formik
 import * as Yup from 'yup'; // Import Yup
+import { useDispatch, useSelector } from 'react-redux';
+import { loginRequest } from '../store/authSlice';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -30,6 +32,10 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false); // for login
   const [showSignupPassword, setShowSignupPassword] = useState(false); // for signup
 
+  // Redux
+  const dispatch = useDispatch();
+  const { user, error } = useSelector(state => state.auth);
+
   useEffect(() => {
     const qMode = query.get('mode');
     if (qMode === 'signup') setMode('signup');
@@ -44,6 +50,13 @@ const Login = () => {
       if (el) el.value = '';
     });
   }, [mode, loginType]);
+
+  // Redirect to admin dashboard on successful admin login
+  useEffect(() => {
+    if (user && loginType === 'Admin' && mode === 'login') {
+      navigate('/admin/dashboard');
+    }
+  }, [user, loginType, mode, navigate]);
 
   const handleSignupClick = (e) => {
     e.preventDefault();
@@ -128,19 +141,19 @@ const Login = () => {
               <Form className="signup-form" autoComplete="off">
                 <div className="login-input-group">
                   <span className="login-icon"><FaUser /></span>
-                  <Field type="text" name="signup_name" id="signup_name" placeholder="Name" className="login-input" autoComplete="off" readOnly onFocus={e => e.target.removeAttribute('readOnly')} />
+                  <Field type="text" name="name" id="signup_name" placeholder="Name" className="login-input" autoComplete="off" readOnly onFocus={e => e.target.removeAttribute('readOnly')} />
                 </div>
-                <ErrorMessage name="signup_name" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="name" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-input-group">
                   <span className="login-icon"><FaEnvelope /></span>
-                  <Field type="email" name="signup_email" id="signup_email" placeholder="Email" className="login-input" autoComplete="off" readOnly onFocus={e => e.target.removeAttribute('readOnly')} />
+                  <Field type="email" name="email" id="signup_email" placeholder="Email" className="login-input" autoComplete="off" readOnly onFocus={e => e.target.removeAttribute('readOnly')} />
                 </div>
-                <ErrorMessage name="signup_email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-input-group" style={{ position: 'relative' }}>
                   <span className="login-icon"><FaLock /></span>
                   <Field
                     type={showSignupPassword ? 'text' : 'password'}
-                    name="signup_password"
+                    name="password"
                     id="signup_password"
                     placeholder="Password"
                     className="login-input"
@@ -164,10 +177,10 @@ const Login = () => {
                     {showSignupPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
                 </div>
-                <ErrorMessage name="signup_password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <button type="submit" className="login-btn-main">SIGNUP</button>
                 <div className="login-signup-message">
-                  Already have an account? <a href="#" className="login-signup-link" onClick={handleLoginClick}>Login!</a>
+                  Already have an account? <button type="button" className="login-signup-link" onClick={handleLoginClick}>Login!</button>
                 </div>
               </Form>
             )}
@@ -185,7 +198,7 @@ const Login = () => {
                   <span className="login-icon"><FaUser /></span>
                   <Field
                     type="email"
-                    name="user_email"
+                    name="email"
                     id="user_email"
                     placeholder="Email"
                     className="login-input"
@@ -194,12 +207,12 @@ const Login = () => {
                     onFocus={e => e.target.removeAttribute('readOnly')}
                   />
                 </div>
-                <ErrorMessage name="user_email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-input-group" style={{ position: 'relative' }}>
                   <span className="login-icon"><FaLock /></span>
                   <Field
                     type={showPassword ? 'text' : 'password'}
-                    name="user_password"
+                    name="password"
                     id="user_password"
                     placeholder="Password"
                     className="login-input"
@@ -221,7 +234,7 @@ const Login = () => {
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
                 </div>
-                <ErrorMessage name="user_password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-options">
                   <label className="login-remember">
                     <input type="checkbox" /> Remember me
@@ -230,7 +243,7 @@ const Login = () => {
                 </div>
                 <button type="submit" className="login-btn-main">LOGIN</button>
                 <div className="login-signup-message">
-                  Don't have an account? <a href="#" className="login-signup-link" onClick={handleSignupClick}>Signup!</a>
+                  Don't have an account? <button type="button" className="login-signup-link" onClick={handleSignupClick}>Signup!</button>
                 </div>
               </Form>
             )}
@@ -240,7 +253,9 @@ const Login = () => {
             key="admin-login"
             initialValues={{ email: '', password: '' }}
             validationSchema={loginValidationSchema}
-            onSubmit={values => { /* handle admin login */ }}
+            onSubmit={values => {
+              dispatch(loginRequest(values));
+            }}
           >
             {() => (
               <Form className="login-form" autoComplete="off">
@@ -248,7 +263,7 @@ const Login = () => {
                   <span className="login-icon"><FaUser /></span>
                   <Field
                     type="email"
-                    name="admin_email"
+                    name="email"
                     id="admin_email"
                     placeholder="Email"
                     className="login-input"
@@ -257,12 +272,12 @@ const Login = () => {
                     onFocus={e => e.target.removeAttribute('readOnly')}
                   />
                 </div>
-                <ErrorMessage name="admin_email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="email" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-input-group" style={{ position: 'relative' }}>
                   <span className="login-icon"><FaLock /></span>
                   <Field
                     type={showPassword ? 'text' : 'password'}
-                    name="admin_password"
+                    name="password"
                     id="admin_password"
                     placeholder="Password"
                     className="login-input"
@@ -286,13 +301,14 @@ const Login = () => {
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
                 </div>
-                <ErrorMessage name="admin_password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
+                <ErrorMessage name="password" component="div" style={{ color: 'red', fontSize: '0.8rem' }} />
                 <div className="login-options">
                   <label className="login-remember">
                     <input type="checkbox" /> Remember me
                   </label>
                   <a href="#" className="login-forgot">Forgot Password?</a>
                 </div>
+                {error && <div style={{ color: 'red', fontSize: '0.9rem', marginTop: 8 }}>{error}</div>}
                 <button type="submit" className="login-btn-main">LOGIN</button>
               </Form>
             )}
