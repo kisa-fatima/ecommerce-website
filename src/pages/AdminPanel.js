@@ -27,11 +27,11 @@ const AdminPanel = () => {
           </div>
           <Content className="admin-content-mobile">
             <Routes>
-              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="/" element={<AdminDashboard />} />
               <Route path="products" element={<AdminProducts />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="coupons" element={<CouponsPlaceholder />} />
-              <Route path="*" element={<Navigate to="dashboard" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Content>
         </Layout>

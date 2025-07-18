@@ -3,13 +3,13 @@ import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { loginRequest, loginSuccess, loginFailure, logout } from './authSlice';
 
-const ADMIN_EMAIL = 'your_admin_email@example.com'; // <-- Replace with your admin email
+const ADMIN_EMAIL = 'admin123@gmail.com';
 
 function* loginSaga(action) {
   try {
     const { email, password } = action.payload;
     const userCredential = yield call(signInWithEmailAndPassword, auth, email, password);
-    if (userCredential.user.email !== ADMIN_EMAIL) {
+    if (!ADMIN_EMAIL.includes(userCredential.user.email)) {
       throw new Error('Not an admin');
     }
     yield put(loginSuccess(userCredential.user));

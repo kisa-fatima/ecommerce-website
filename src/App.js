@@ -40,7 +40,7 @@ function AppContent() {
         <Route path="/party" element={<Party />} />
         <Route path="/gym" element={<Gym />} />
         <Route
-          path="/admin/dashboard"
+          path="/admin-dashboard/*"
           element={
             <ProtectedRoute>
               <AdminPanel />

@@ -12,19 +12,19 @@ const { Sider } = Layout;
 
 const menuItems = [
   {
-    key: '/admin/dashboard',
+    key: '/admin-dashboard',
     icon: <AppstoreOutlined />,
-    label: <NavLink to="/admin/dashboard">Dashboard</NavLink>,
+    label: <NavLink to="/admin-dashboard">Dashboard</NavLink>,
   },
   {
-    key: '/admin/products',
+    key: '/admin-dashboard/products',
     icon: <UnorderedListOutlined />,
-    label: <NavLink to="/admin/products">Product catalog</NavLink>,
+    label: <NavLink to="/admin-dashboard/products">Product catalog</NavLink>,
   },
   {
-    key: '/admin/categories',
+    key: '/admin-dashboard/categories',
     icon: <BoxPlotOutlined />,
-    label: <NavLink to="/admin/categories">Category management</NavLink>,
+    label: <NavLink to="/admin-dashboard/categories">Category management</NavLink>,
   }
 ];
 
@@ -41,6 +41,9 @@ const AdminSidebar = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Ensure the correct menu item is selected
+  const selectedKey = menuItems.find(item => location.pathname.startsWith(item.key))?.key || '/admin-dashboard';
 
   // Only show border when not collapsed
   const siderStyle = collapsed
@@ -59,7 +62,7 @@ const AdminSidebar = () => {
     >
       <Menu
         mode="inline"
-        selectedKeys={[location.pathname.startsWith('/admin') ? location.pathname : '/admin/dashboard']}
+        selectedKeys={[selectedKey]}
         style={{ height: '100%', borderRight: 0, paddingTop: 16 }}
         items={menuItems}
       />
