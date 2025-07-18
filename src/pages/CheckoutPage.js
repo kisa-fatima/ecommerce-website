@@ -9,7 +9,7 @@ import { Formik } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearCart } from '../store/cartSlice';
 import db, { auth } from '../firebase';
-import { collection, addDoc, updateDoc, doc, increment } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, doc, increment, arrayUnion } from 'firebase/firestore';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
@@ -79,7 +79,12 @@ const CheckoutPage = () => {
         },
       };
       // Add order to Firestore
-      await addDoc(collection(db, 'orders'), orderData);
+      const orderRef = await addDoc(collection(db, 'orders'), orderData);
+      // Add order ID to user's orders array
+      const userRef = doc(db, 'users', user.id);
+      await updateDoc(userRef, {
+        orders: arrayUnion(orderRef.id)
+      });
       // Update each product's soldCount and quantity
       for (const item of cart) {
         const productRef = doc(db, 'products', item.id);
@@ -131,7 +136,31 @@ const CheckoutPage = () => {
                       disabled={!(isValid && dirty) || isSubmitting}
                       onClick={handleSubmit}
                     >
-                      Place Order <span className="arrow">→</span>
+                      {isSubmitting ? (
+                        <span>
+                          <span className="spinner" style={{ marginRight: 8, verticalAlign: 'middle' }}>
+                            <svg width="18" height="18" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#fff">
+                              <g fill="none" fillRule="evenodd">
+                                <g transform="translate(1 1)" strokeWidth="3">
+                                  <circle strokeOpacity=".3" cx="18" cy="18" r="18" />
+                                  <path d="M36 18c0-9.94-8.06-18-18-18">
+                                    <animateTransform
+                                      attributeName="transform"
+                                      type="rotate"
+                                      from="0 18 18"
+                                      to="360 18 18"
+                                      dur="1s"
+                                      repeatCount="indefinite" />
+                                  </path>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                          Placing Order...
+                        </span>
+                      ) : (
+                        <>Place Order <span className="arrow">→</span></>
+                      )}
                     </button>
                   </>
                 )}
