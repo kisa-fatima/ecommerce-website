@@ -294,6 +294,51 @@ export async function getTotalRevenue() {
   }, 0);
 }
 
+/**
+ * Get the total number of users
+ */
+export async function getTotalUsers() {
+  const usersCol = collection(db, 'users');
+  const usersSnapshot = await getDocs(usersCol);
+  return usersSnapshot.size;
+}
+
+/**
+ * Get the total number of orders
+ */
+export async function getTotalOrders() {
+  const ordersCol = collection(db, 'orders');
+  const ordersSnapshot = await getDocs(ordersCol);
+  return ordersSnapshot.size;
+}
+
+/**
+ * Get the total number of products
+ */
+export async function getTotalProducts() {
+  const productsCol = collection(db, 'products');
+  const productsSnapshot = await getDocs(productsCol);
+  return productsSnapshot.size;
+}
+
+/**
+ * Get the number of out of stock products
+ */
+export async function getOutOfStockProducts() {
+  const productsCol = collection(db, 'products');
+  const productsSnapshot = await getDocs(productsCol);
+  return productsSnapshot.docs.filter(doc => doc.data().inStock === false).length;
+}
+
+/**
+ * Get the number of pending orders
+ */
+export async function getPendingOrders() {
+  const ordersCol = collection(db, 'orders');
+  const ordersSnapshot = await getDocs(ordersCol);
+  return ordersSnapshot.docs.filter(doc => doc.data().status === 'pending').length;
+}
+
 // Delete a product by ID
 export async function deleteProductById(productId) {
   const docRef = doc(db, 'products', productId);
