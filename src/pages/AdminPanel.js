@@ -5,7 +5,7 @@ import AdminSidebar from '../components/AdminSidebar';
 import AdminDashboard from './AdminDashboard';
 import AdminProducts from './AdminProducts';
 import AdminCategories from './AdminCategories';
-import PanelHeader from '../components/PanelHeader';
+// import PanelHeader from '../components/PanelHeader';
 
 const { Content } = Layout;
 
@@ -20,7 +20,7 @@ const AdminPanel = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Layout>
-        <PanelHeader />
+        {/* <PanelHeader /> */}
         <Layout>
           <div className="admin-sidebar-sticky-wrapper">
             <AdminSidebar />

@@ -1,3 +1,5 @@
+import React from 'react';
+import { useSelector } from 'react-redux';
 import './App.css';
 import AboveHeader from './components/AboveHeader';
 import Header from './components/Header';
@@ -10,17 +12,19 @@ import Kids from './pages/Kids';
 import AllProducts from './pages/AllProducts';
 import Footer from './components/Footer';
 import Login from './pages/Login';
-import Casual from './pages/Casual'
+import Casual from './pages/Casual';
 import Formal from './pages/Formal';
 import Party from './pages/Party';
 import Gym from './pages/Gym';
 import Loader from './components/Loader';
-import React from 'react';
 import AdminPanel from './pages/AdminPanel';
 import ProductPage from './pages/ProductPage';
 import { updateAllProductsCategoryNames } from './services/databaseFunctions';
 import CartPage from './pages/CartPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import PanelHeader from './components/PanelHeader';
+
+const ADMIN_EMAIL = 'admin123@gmail.com';
 
 function AppContent() {
   const location = useLocation();
@@ -58,6 +62,8 @@ function AppContent() {
 
 function App() {
   const [loading, setLoading] = React.useState(true);
+  const user = useSelector(state => state.auth.user);
+  const isAdmin = user && user.email === ADMIN_EMAIL;
 
   React.useEffect(() => {
     // Removed temporary updateAllProductsCategoryNames useEffect
@@ -75,6 +81,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
+      {isAdmin && <PanelHeader />}
       <AppContent />
     </Router>
   );

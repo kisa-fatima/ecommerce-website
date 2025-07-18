@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import HomeHero from '../components/HomeHero';
 import '../styles/Home.css';
 import BrandLogos from '../components/BrandLogos';
@@ -7,7 +8,11 @@ import TopSelling from '../components/TopSelling';
 import BrowseByStyle from '../components/BrowseByStyle';
 import HappyCustomers from '../components/HappyCustomers';
 
+const ADMIN_EMAIL = 'admin123@gmail.com';
+
 const Home = () => {
+  // const user = useSelector(state => state.auth.user);
+  // const isAdmin = user && user.email === ADMIN_EMAIL;
   return (
     <div>
       <HomeHero />
