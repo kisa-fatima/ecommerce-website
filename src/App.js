@@ -42,7 +42,7 @@ function AppContent() {
         <Route path="/gym" element={<Gym />} />
         <Route path="/cart" element={<CartPage />} />
         <Route
-          path="/admin-dashboard/*"
+          path="/admin/*"
           element={
             <ProtectedRoute>
               <AdminPanel />
