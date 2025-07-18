@@ -25,6 +25,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import CheckoutPage from './pages/CheckoutPage';
 import PanelHeader from './components/PanelHeader';
 import MyAccount from './pages/MyAccount';
+import MyOrders from './pages/MyOrders';
 const ADMIN_EMAIL = 'admin123@gmail.com';
 
 function AppContent() {
@@ -48,6 +49,7 @@ function AppContent() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/my-account" element={<MyAccount />} />
+        <Route path="/my-orders" element={<MyOrders />} />
         <Route
           path="/admin/*"
           element={

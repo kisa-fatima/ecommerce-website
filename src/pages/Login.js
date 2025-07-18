@@ -239,6 +239,7 @@ const Login = () => {
                 });
                 if (found) {
                   localStorage.setItem('userName', foundUserName);
+                  localStorage.setItem('userEmail', inputEmail);
                   setStatus({ success: 'Login successful! Redirecting...' });
                   setTimeout(() => {
                     navigate('/');

@@ -17,14 +17,14 @@ const MyAccount = () => {
   const [initialValues, setInitialValues] = useState(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(null);
-  const userName = localStorage.getItem('userName');
+  const userEmail = localStorage.getItem('userEmail');
 
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
       try {
         const usersRef = collection(db, 'users');
-        const q = query(usersRef, where('name', '==', userName));
+        const q = query(usersRef, where('email', '==', userEmail));
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           const docSnap = querySnapshot.docs[0];
@@ -45,12 +45,12 @@ const MyAccount = () => {
         setLoading(false);
       }
     };
-    if (userName) fetchUser();
+    if (userEmail) fetchUser();
     else {
       setStatus({ error: 'Not logged in.' });
       setLoading(false);
     }
-  }, [userName]);
+  }, [userEmail]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setStatus(null);
