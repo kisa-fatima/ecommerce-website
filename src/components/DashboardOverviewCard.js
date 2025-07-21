@@ -143,7 +143,6 @@ const DashboardOverviewCard = () => {
         <DashboardStatsCard icon={<FaExclamationCircle color="#ff3b3b" />} label="Out of Stock" value={outOfStock === null ? <span style={{ color: '#bbb' }}>—</span> : outOfStock} />
         <DashboardStatsCard icon={<FaClipboardList color="#ffb300" />} label="Pending Orders" value={pendingOrders === null ? <span style={{ color: '#bbb' }}>—</span> : pendingOrders} />
         <DashboardStatsCard icon={<FaEye color="#52c41a" />} label="Active Products" value={activeProducts === null ? <span style={{ color: '#bbb' }}>—</span> : activeProducts} />
-        <DashboardStatsCard icon={<FaCheckCircle color="#52c41a" />} label="Delivered Orders" value={deliveredOrders === null ? <span style={{ color: '#bbb' }}>—</span> : deliveredOrders} />
       </div>
       {/* Graphs Section */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, marginTop: 40, justifyContent: 'center' }}>

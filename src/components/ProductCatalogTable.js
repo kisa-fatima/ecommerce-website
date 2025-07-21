@@ -148,7 +148,7 @@ const columns = (onView, onEdit, onDelete) => [
   },
 ];
 
-const ProductCatalogTable = () => {
+const ProductCatalogTable = ({ products, onAddClick, addModalOpen, setAddModalOpen }) => {
   const [data, setData] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -326,9 +326,9 @@ const ProductCatalogTable = () => {
   React.useEffect(() => {
     async function fetchProducts() {
       setLoading(true);
-      const products = await getAllProducts();
+      const productsData = products || await getAllProducts();
       // For each product, resolve category path (category > style > type)
-      const dataWithHierarchy = await Promise.all(products.map(async (product) => {
+      const dataWithHierarchy = await Promise.all(productsData.map(async (product) => {
         // Always use categoryID (deepest) if present, otherwise fallback to category
         const catId = product.categoryID || product.category;
         let categoryName = '', styleName = '', typeName = '';
@@ -366,32 +366,24 @@ const ProductCatalogTable = () => {
       setLoading(false);
     }
     fetchProducts();
-  }, []);
+  }, [products]);
 
   // Responsive check for mobile
   const isMobile = window.innerWidth <= 600;
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: isMobile ? 'flex-start' : 'flex-end', marginBottom: 16 }}>
-        <Button
-          icon={<PlusOutlined />} 
-          onClick={() => setModalOpen(true)}
-          style={{ background: '#111', color: '#fff', border: 'none' }}
-        >
-          Add
-        </Button>
-      </div>
-    <Table
+      {/* Add button removed from here */}
+      <Table
         columns={columns(handleView, handleEdit, handleDelete)}
-      dataSource={data}
-      rowSelection={{ type: 'checkbox' }}
-      pagination={false}
-      bordered
-      style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', minWidth: 700 }}
+        dataSource={data}
+        rowSelection={{ type: 'checkbox' }}
+        pagination={false}
+        bordered
+        style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', minWidth: 700 }}
         loading={{ spinning: loading, indicator: <Spin indicator={<LoadingOutlined style={{ fontSize: 32, color: '#111' }} spin />} /> }}
-    />
-      <AddProductModal visible={modalOpen} onCancel={() => setModalOpen(false)} onAdd={handleAdd} />
+      />
+      <AddProductModal visible={addModalOpen} onCancel={() => setAddModalOpen(false)} onAdd={handleAdd} />
       <AddProductModal visible={editModalOpen} onCancel={() => setEditModalOpen(false)} onAdd={handleUpdate} product={productToEdit} isEditMode />
       <ProductViewModal visible={viewModalOpen} onClose={() => setViewModalOpen(false)} product={selectedProduct} />
     </div>

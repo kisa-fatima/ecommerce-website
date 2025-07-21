@@ -26,24 +26,26 @@ const AdminUsers = () => {
       ) : users.length === 0 ? (
         <div>No users found.</div>
       ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ background: '#f7f7f7' }}>
-              <th style={{ padding: 10, border: '1px solid #eee', textAlign: 'left' }}>Name</th>
-              <th style={{ padding: 10, border: '1px solid #eee', textAlign: 'left' }}>Email</th>
-              <th style={{ padding: 10, border: '1px solid #eee', textAlign: 'left' }}>Orders</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(user => (
-              <tr key={user.id}>
-                <td style={{ padding: 10, border: '1px solid #eee' }}>{user.name}</td>
-                <td style={{ padding: 10, border: '1px solid #eee' }}>{user.email}</td>
-                <td style={{ padding: 10, border: '1px solid #eee' }}>{user.orders ? user.orders.length : 0}</td>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', minWidth: 600, borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: '#f7f7f7' }}>
+                <th style={{ padding: 10, border: '1px solid #eee', textAlign: 'left' }}>Name</th>
+                <th style={{ padding: 10, border: '1px solid #eee', textAlign: 'left' }}>Email</th>
+                <th style={{ padding: 10, border: '1px solid #eee', textAlign: 'left' }}>Orders</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map(user => (
+                <tr key={user.id}>
+                  <td style={{ padding: 10, border: '1px solid #eee' }}>{user.name}</td>
+                  <td style={{ padding: 10, border: '1px solid #eee' }}>{user.email}</td>
+                  <td style={{ padding: 10, border: '1px solid #eee' }}>{user.orders ? user.orders.length : 0}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
